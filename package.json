@@ -1,0 +1,5 @@
+{
+  "name": "fieldwork-live-search", "version": "0.2.0", "private": true,
+  "type": "module", "engines": {"node": ">=22 <25"},
+  "scripts": {"start": "node --env-file-if-exists=.env server.mjs", "dev": "node --env-file-if-exists=.env server.mjs", "test": "node --test", "check": "node --check server.mjs && node --check lib/search.mjs && node --check public/app.js"}
+}
