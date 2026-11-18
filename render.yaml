@@ -13,6 +13,10 @@ services:
         value: production
       - key: TAVILY_API_KEY
         sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
       - key: MAX_SEARCHES_PER_DAY
         value: "100"
       - key: MAX_CONCURRENT_SEARCHES

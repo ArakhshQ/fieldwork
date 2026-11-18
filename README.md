@@ -32,6 +32,16 @@ Visit http://localhost:3000. Without a key the interface works, but live search 
 
 The blueprint requests Render's free web-service plan. Confirm current availability and limits in your account. Search API usage may incur charges; set provider-side quotas/spend controls before a public launch. The application makes 2–4 search calls plus up to one extract call per request, with at most 16 pages submitted for extraction. Provider credits are not equivalent to HTTP call counts.
 
+## Accounts (optional)
+
+Students can use everything without an account. Signing in by email link syncs their profile, saved opportunities and applications across devices through Supabase; anything saved in that browser beforehand is moved into the account on first sign-in, and signing out removes the browser's copy.
+
+1. Create a Supabase project and run `supabase/001_accounts.sql` in its SQL Editor. It creates the three tables, row-level security (each student can only read or change their own rows), per-student row caps and `updated_at` triggers. It is safe to re-run.
+2. In Supabase → Authentication → URL Configuration, set the Site URL to the deployed address and add `https://<your-site>/**` and `http://localhost:3000/**` as redirect URLs.
+3. Set `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (or the legacy anon key) on Render. Without them the Sign in button stays hidden and the app works locally as before.
+
+The browser talks to Supabase directly with the publishable key; the server never needs the secret key for this phase. The CSP's `connect-src` is widened only to the configured Supabase origin, and only when it is a valid https URL. Supabase's built-in email sender is heavily rate-limited; connect a custom SMTP provider before launch.
+
 ## Search flow
 
 1. Validate a short query and preferences for type, geography, remote work, funding, and optional public social discovery.
@@ -54,7 +64,7 @@ Preferences shape queries, not strict eligibility filters. The page has separate
 
 ## Security and privacy
 
-Server-side API key; no keys embedded in frontend assets. An explicit static-file allowlist prevents serving `.env` or source files. CSP, safe URL schemes, plain-text rendering, request limits and same-origin checks are included. No arbitrary URLs are fetched by the Node server; extraction is delegated to the search provider for returned public URLs.
+Server-side API key; no secret keys in frontend assets. Static files are served only from `public/`, only for an allowlist of file types, with dotfiles and path traversal rejected. Fonts and the Supabase client are self-hosted, so no third-party script or font hosts are contacted. CSP, safe URL schemes, plain-text rendering, request limits and same-origin checks are included. No arbitrary URLs are fetched by the Node server; extraction is delegated to the search provider for returned public URLs.
 
 Searches and preferences are sent to Tavily. Do not enter sensitive personal information. This app adds no analytics and logs neither query bodies nor credentials. Hosting and provider services may retain their own logs. Saved items remain in the student's browser.
 
@@ -68,7 +78,10 @@ The daily, concurrency and request-rate circuit breakers are **per server instan
 
 - `server.mjs`: Node server, routes, guards and static assets
 - `lib/search.mjs`: query planning, provider adapter, deduplication, evidence analysis
-- `public/`: responsive interface, filters, evidence dialogs and local bookmarks
+- `public/index.html`, `public/style.css`: the interface
+- `public/js/`: ES modules — `main` (routing), `store` (local + synced data), `discover` (sentence search and results), `cards`, `saved` (compare), `applications` (drag-and-drop board), `profile` (profile and sign-in), `ui` (helpers)
+- `public/vendor/`, `public/fonts/`: self-hosted Supabase client (v2.119.0) and fonts (Young Serif, Schibsted Grotesk; SIL Open Font License)
+- `supabase/001_accounts.sql`: database tables and security rules
 - `test/`: behavior and API tests
 - `render.yaml`: Render deployment blueprint
 - `.github/workflows/test.yml`: GitHub CI
