@@ -17,6 +17,24 @@ services:
         sync: false
       - key: SUPABASE_PUBLISHABLE_KEY
         sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PRO_PREVIEW_CODES
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: PADDLE_CLIENT_TOKEN
+        sync: false
+      - key: PADDLE_PRICE_MONTHLY
+        sync: false
+      - key: PADDLE_PRICE_SEASON
+        sync: false
+      - key: PADDLE_WEBHOOK_SECRET
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: AI_DAILY_BUDGET_USD
+        value: "5"
       - key: MAX_SEARCHES_PER_DAY
         value: "100"
       - key: MAX_CONCURRENT_SEARCHES

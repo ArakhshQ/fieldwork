@@ -13,7 +13,7 @@ const KEYS = {
 };
 export const STAGES = ['Saved', 'Preparing', 'Applied', 'Interview', 'Offer', 'Closed'];
 export const LIMIT = 200;
-const PROFILE_FIELDS = ['name', 'major', 'level', 'city', 'state', 'radius', 'interests', 'available', 'work'];
+const PROFILE_FIELDS = ['name', 'school', 'major', 'level', 'city', 'state', 'radius', 'interests', 'available', 'work'];
 
 const read = (key, fallback) => {
   try {
@@ -68,6 +68,27 @@ function emit() {
 }
 
 export const getState = () => state;
+
+// The résumé never leaves this device except inside a Pro request the student starts.
+const RESUME_KEY = 'fieldwork-resume';
+const OUTREACH_KEY = 'fieldwork-outreach';
+export const getResume = () => read(RESUME_KEY, '') || '';
+export const setResume = (text) => write(RESUME_KEY, String(text || '').slice(0, 6000));
+/** Emails a student said they sent, by lab id, so follow-ups can build on them. */
+export const getOutreach = (id) => read(OUTREACH_KEY, {})[id] || null;
+export function setOutreach(id, entry) {
+  const all = read(OUTREACH_KEY, {});
+  all[id] = { ...entry, at: new Date().toISOString() };
+  const ids = Object.keys(all).sort((a, b) => (all[b].at || '').localeCompare(all[a].at || ''));
+  for (const old of ids.slice(LIMIT)) delete all[old];
+  write(OUTREACH_KEY, all);
+}
+/** The signed-in student's session token, for Pro requests. */
+export async function accessToken() {
+  if (!db || !state.user) return '';
+  const { data } = await db.auth.getSession();
+  return data.session?.access_token || '';
+}
 export const isSaved = (id) => state.saved.some((s) => s.id === id);
 
 // ---- Cloud ---------------------------------------------------------------
@@ -112,6 +133,7 @@ const fromAppRow = (row) => ({
 const profileRow = (p, id) => ({
   id,
   name: p.name || null,
+  school: p.school || null,
   major: p.major || null,
   level: p.level || null,
   city: p.city || null,
@@ -222,7 +244,7 @@ export async function signOut() {
   state.saved = [];
   state.applications = [];
   emit();
-  for (const key of Object.values(KEYS)) localStorage.removeItem(key);
+  for (const key of [...Object.values(KEYS), RESUME_KEY, OUTREACH_KEY]) localStorage.removeItem(key);
 }
 
 // ---- Mutations -----------------------------------------------------------
@@ -289,6 +311,8 @@ export async function deleteWorkspace() {
   state.profile = {};
   state.saved = [];
   state.applications = [];
+  localStorage.removeItem(RESUME_KEY);
+  localStorage.removeItem(OUTREACH_KEY);
   emit();
 }
 

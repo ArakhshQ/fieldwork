@@ -1,6 +1,7 @@
 // One opportunity card, used by search results and the Saved page.
 import { el, externalLink, shortDate, toast } from './ui.js';
 import { isSaved, toggleSave, track } from './store.js';
+import { writeToProfessor } from './pro.js';
 
 const SIGNALS = {
   live_posting: ['open', 'Live job posting'],
@@ -130,8 +131,13 @@ export function opportunityCard(r, opts = {}) {
     card.append(externalLink('Find the program’s website', 'https://www.google.com/search?q=' + encodeURIComponent(q), 'card-link'));
   }
   if (r.group === 'labs' && r.pi) {
-    const q = `${r.pi} lab ${r.title.split(', ').slice(1).join(', ')}`;
+    const q = `${r.pi} lab ${r.institution || r.title.split(', ').slice(1).join(', ')}`;
     card.append(externalLink('Find the lab’s website', 'https://www.google.com/search?q=' + encodeURIComponent(q), 'card-link'));
+    const write = el('button', 'Write to this professor', 'button small pro-action');
+    write.type = 'button';
+    write.append(el('span', 'Pro', 'pro-badge'));
+    write.addEventListener('click', () => writeToProfessor(r));
+    card.append(write);
   }
 
   const foot = el('div', null, 'card-foot');

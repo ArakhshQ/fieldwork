@@ -4,8 +4,10 @@ import { initDiscover, setSearchAvailability } from './discover.js';
 import { initSaved, renderSaved } from './saved.js';
 import { initApplications, renderBoard } from './applications.js';
 import { initProfile, renderProfile, renderAccountButton } from './profile.js';
+import { initPro, refreshStatus } from './pro.js';
 
 const VIEWS = ['discover', 'saved', 'applications', 'plans', 'profile'];
+let proReady = false;
 
 function currentView() {
   const v = location.hash.replace('#', '');
@@ -50,6 +52,7 @@ async function start() {
   }
   window.addEventListener('hashchange', () => {
     show();
+    if (currentView() === 'plans' && proReady) refreshStatus();
     if (currentView() !== 'discover') scrollTo({ top: 0 });
   });
   show();
@@ -63,6 +66,8 @@ async function start() {
     $('status').textContent = 'Couldn’t reach the server. Check your connection and refresh.';
   }
   const wasSignedIn = /access_token=/.test(location.hash);
+  initPro(config.pro);
+  proReady = !!config.pro?.ai;
   await initAccounts(config.accounts, {
     onMoved: (n) => toast(`Moved ${n} item${n === 1 ? '' : 's'} from this browser into your account.`),
   });
@@ -71,6 +76,7 @@ async function start() {
     show();
     if (wasSignedIn && getState().user) toast(`Signed in as ${getState().user.email}.`);
   }
+  if (config.pro?.ai && getState().user) refreshStatus();
 }
 
 start();

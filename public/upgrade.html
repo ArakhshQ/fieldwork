@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Get Pro · Fieldwork</title>
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/vendor/supabase-2.119.0.js" defer></script>
+    <script src="/js/upgrade.js" type="module"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">fieldwork</a>
+      <div class="account"><a class="button ghost small" href="/#plans">Back to Fieldwork</a></div>
+    </header>
+    <main class="page upgrade">
+      <div class="page-head">
+        <h2>Get Fieldwork Pro</h2>
+        <p>Briefings on any lab and personal emails to professors, written from your profile and résumé.</p>
+      </div>
+      <p id="upgrade-status" class="status" role="status">Checking…</p>
+      <div id="upgrade-plans" class="plans" hidden>
+        <article class="plan plan-pro">
+          <h3>Monthly</h3>
+          <p class="plan-price">$19 a month. Cancel anytime.</p>
+          <ul>
+            <li>40 lab briefings and 80 emails a month</li>
+            <li>Follow-up drafts and reminders</li>
+          </ul>
+          <button type="button" class="button" data-plan="monthly">Choose monthly</button>
+        </article>
+        <article class="plan" id="season-plan" hidden>
+          <h3>Season</h3>
+          <p class="plan-price">$59 for 4 months, about $15 a month</p>
+          <ul>
+            <li>Covers a full application season</li>
+            <li>Same limits as monthly</li>
+          </ul>
+          <button type="button" class="button ghost" data-plan="season">Choose season</button>
+        </article>
+      </div>
+      <p class="fine upgrade-fine">
+        Payments are handled by Paddle, our reseller and merchant of record, which also handles tax. See
+        <a href="/subscriptions">Subscriptions</a> and <a href="/terms">Terms</a>.
+      </p>
+    </main>
+    <footer class="site-footer">
+      <span>Fieldwork · free beta</span>
+      <a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscriptions">Subscriptions</a>
+    </footer>
+  </body>
+</html>
