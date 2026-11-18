@@ -203,6 +203,7 @@ let research = { programs: [], labs: [] };
 let web = { state: 'idle', results: [], error: '', queries: [], warnings: '' };
 const SHOW_STEP = { listings: 9, programs: 6, labs: 6, web: 24 };
 let shownCount = { ...SHOW_STEP };
+let counts = null; // what's actually shown after filters, for the status line
 
 function searchInput() {
   return {
@@ -303,6 +304,7 @@ async function runSearch() {
   research = { programs: [], labs: [] };
   web = { state: 'idle', results: [], error: '', queries: [], warnings: '' };
   shownCount = { ...SHOW_STEP };
+  counts = null;
   $('starters').hidden = true;
   $('submit').disabled = true;
   $('result-title').textContent = 'Searching…';
@@ -342,13 +344,14 @@ function renderStatus() {
   if (!lastQuery) return;
   const parts = [];
   const n = (count, one, many) => `${count} ${count === 1 ? one : many}`;
-  if (listings.length) parts.push(n(listings.length, 'live internship posting', 'live internship postings'));
-  if (research.programs.length) parts.push(n(research.programs.length, 'research program', 'research programs'));
-  if (research.labs.length) parts.push(n(research.labs.length, 'newly funded lab', 'newly funded labs'));
+  const c = counts || { listings: listings.length, programs: research.programs.length, labs: research.labs.length, web: web.results.length };
+  if (c.listings) parts.push(n(c.listings, 'live internship posting', 'live internship postings'));
+  if (c.programs) parts.push(n(c.programs, 'research program', 'research programs'));
+  if (c.labs) parts.push(n(c.labs, 'newly funded lab', 'newly funded labs'));
   if (web.state === 'loading') {
     const secs = web.started ? ` (${Math.floor((Date.now() - web.started) / 1000)}s)` : '';
     parts.push(`still searching the web${secs}`);
-  } else if (web.state === 'done') parts.push(n(web.results.length, 'page from the web', 'pages from the web'));
+  } else if (web.state === 'done') parts.push(n(c.web, 'page from the web', 'pages from the web'));
   const where = [
     TYPES.find(([v]) => v === lastQuery.type)[1],
     placePhrase(),
@@ -415,6 +418,7 @@ function renderResults() {
     },
   ];
   const total = groups.reduce((n, g) => n + g.items.length, 0);
+  counts = Object.fromEntries(groups.map((g) => [g.key, g.items.length]));
   const anyRaw = listings.length + research.programs.length + research.labs.length + web.results.length;
   const waiting = loading && total === 0;
 

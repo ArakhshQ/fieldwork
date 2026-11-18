@@ -27,7 +27,10 @@ const clean = (v, max = 400) =>
 const BOILERPLATE = /This award reflects NSF['’]s statutory mission[\s\S]*$/i;
 
 export function summaryOf(text, max = 320) {
-  const t = clean(String(text || '').replace(BOILERPLATE, ''), 4000);
+  const t = clean(String(text || '').replace(BOILERPLATE, ''), 4000).replace(
+    /^((project\s+)?(summary|abstract|narrative|description)\s*[/:.\-–]*\s*)+/i,
+    '',
+  );
   if (t.length <= max) return t;
   const cut = t.slice(0, max);
   return cut.slice(0, Math.max(cut.lastIndexOf('. ') + 1, cut.lastIndexOf(' '))).trim() + '…';
@@ -57,7 +60,7 @@ const smartCase = (s) => {
 const titleCase = (s) =>
   clean(s, 120)
     .toLowerCase()
-    .replace(/\b([a-z])/g, (c) => c.toUpperCase())
+    .replace(/(^|[\s\-(/"“])([a-z])/g, (m, pre, c) => pre + c.toUpperCase())
     .replace(/\b(Of|And|The|At|In|For|On)\b/g, (w) => w.toLowerCase())
     .replace(/^./, (c) => c.toUpperCase())
     .replace(/\b(Sdsu|Ucla|Usc|Mit|Nyu|Cuny|Suny|Uc|Ucsf|Ucsd|Reu|Nih|Nsf|Stem|Ai|Hiv|Aids|Dna|Rna|Us|Usa|Lgbtq|Hbcu|Msi|Covid)\b/g, (w) => w.toUpperCase())
@@ -69,11 +72,12 @@ const titleCase = (s) =>
 export function personName(raw) {
   const s = clean(raw, 120);
   if (!s) return '';
+  const fixWord = (w) => (w.length > 1 && w === w.toUpperCase() ? titleCase(w) : w);
   if (s.includes(',')) {
     const [last, first] = s.split(',').map((x) => x.trim());
-    return titleCase(`${first} ${last}`);
+    return `${first} ${last}`.split(' ').filter(Boolean).map(fixWord).join(' ');
   }
-  return s === s.toUpperCase() ? titleCase(s) : s;
+  return s.split(' ').map(fixWord).join(' ');
 }
 
 const usDate = (d) => `${String(d.getUTCMonth() + 1).padStart(2, '0')}/${String(d.getUTCDate()).padStart(2, '0')}/${d.getUTCFullYear()}`;

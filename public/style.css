@@ -749,6 +749,8 @@ label.check input {
   font-size: 0.84rem;
 }
 .kind {
+  flex: none;
+  white-space: nowrap;
   font-weight: 700;
   color: var(--ink);
 }

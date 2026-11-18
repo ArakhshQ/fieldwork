@@ -119,7 +119,15 @@ export function opportunityCard(r, opts = {}) {
   foot.append(
     el(
       'span',
-      r.savedAt ? `Saved ${shortDate(r.savedAt)}` : r.postedAt ? `Posted ${shortDate(r.postedAt)}` : `Found ${shortDate(r.foundAt)}`,
+      r.savedAt
+        ? `Saved ${shortDate(r.savedAt)}`
+        : r.awardDate
+          ? `Awarded ${shortDate(r.awardDate)}`
+          : r.fundedThrough
+            ? `Funded through ${shortDate(r.fundedThrough)}`
+            : r.postedAt
+              ? `Posted ${shortDate(r.postedAt)}`
+              : `Found ${shortDate(r.foundAt)}`,
       'fine',
     ),
     trackButton(r),

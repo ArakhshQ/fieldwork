@@ -134,7 +134,7 @@ export function createApp({
       try {
         const data =
           url.pathname === '/api/research'
-            ? await research.search({ ...query, limit: 30 })
+            ? await research.search({ ...query, limit: 60 })
             : await catalog.search({ ...query, limit: 80 });
         return send(200, data);
       } catch {
