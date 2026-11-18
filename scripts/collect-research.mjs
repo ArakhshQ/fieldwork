@@ -49,12 +49,21 @@ export function siteUrlIn(text) {
   return '';
 }
 
+// Only re-case text that arrives in ALL CAPS; mixed-case titles keep their acronyms.
+const smartCase = (s) => {
+  const t = clean(s, 240);
+  return t && t === t.toUpperCase() ? titleCase(t) : t;
+};
 const titleCase = (s) =>
   clean(s, 120)
     .toLowerCase()
     .replace(/\b([a-z])/g, (c) => c.toUpperCase())
     .replace(/\b(Of|And|The|At|In|For|On)\b/g, (w) => w.toLowerCase())
-    .replace(/^./, (c) => c.toUpperCase());
+    .replace(/^./, (c) => c.toUpperCase())
+    .replace(/\b(Sdsu|Ucla|Usc|Mit|Nyu|Cuny|Suny|Uc|Ucsf|Ucsd|Reu|Nih|Nsf|Stem|Ai|Hiv|Aids|Dna|Rna|Us|Usa|Lgbtq|Hbcu|Msi|Covid)\b/g, (w) => w.toUpperCase())
+    .replace(/\bUmass\b/g, 'UMass')
+    .replace(/\bPhd\b/g, 'PhD')
+    .replace(/\bMd\b/g, 'MD');
 
 /** "SMITH, JANE A" -> "Jane A Smith"; "Jane Smith" stays. */
 export function personName(raw) {
@@ -122,13 +131,12 @@ async function nsfPages(params, { maxPages = 400, label }) {
 export function nsfProgram(a) {
   if (!/\bREU\b/.test(a.title || '')) return null;
   const title = clean(a.title, 240)
-    .replace(/^(Collaborative Research:\s*)?REU Site:\s*/i, '')
-    .replace(/^REU:\s*/i, '');
+    .replace(/^(Collaborative Research:\s*)?REU(\s+Site)?\s*[:\-–]?\s*/i, '');
   return {
     id: `nsf-reu:${a.id}`,
     source: 'nsf-reu',
     title,
-    institution: titleCase(a.awardeeName),
+    institution: smartCase(a.awardeeName),
     city: titleCase(a.awardeeCity),
     state: clean(a.awardeeStateCode, 2).toUpperCase(),
     pi: personName(`${a.piFirstName || ''} ${a.piLastName || ''}`),
@@ -154,7 +162,7 @@ export function nsfLab(a) {
     id: `nsf:${a.id}`,
     source: 'nsf',
     pi,
-    institution: titleCase(a.awardeeName),
+    institution: smartCase(a.awardeeName),
     city: titleCase(a.awardeeCity),
     state: clean(a.awardeeStateCode, 2).toUpperCase(),
     title: title.replace(/^Collaborative Research:\s*/i, ''),
@@ -217,8 +225,8 @@ export function nihProgram(p) {
   return {
     id: `nih-r25:${p.core_project_num || p.appl_id}`,
     source: 'nih-r25',
-    title: titleCase(p.project_title),
-    institution: titleCase(org.org_name),
+    title: smartCase(p.project_title),
+    institution: smartCase(org.org_name),
     city: titleCase(org.org_city),
     state: clean(org.org_state, 2).toUpperCase(),
     pi: contactPi(p),
@@ -249,10 +257,10 @@ export function nihLab(p) {
     id: `nih:${p.core_project_num || p.appl_id}`,
     source: 'nih',
     pi,
-    institution: titleCase(org.org_name),
+    institution: smartCase(org.org_name),
     city: titleCase(org.org_city),
     state: clean(org.org_state, 2).toUpperCase(),
-    title: titleCase(p.project_title),
+    title: smartCase(p.project_title),
     agency: ic ? `NIH ${ic}` : 'NIH',
     mechanism: code,
     newFaculty: code === 'R00' || code === 'DP2',
@@ -332,9 +340,13 @@ async function main() {
   const programs = [...keep('nsfPrograms', 'programs', 'nsf-reu'), ...keep('nihPrograms', 'programs', 'nih-r25')]
     .map(({ fiscalYear, ...p }) => p)
     .sort((a, b) => a.title.localeCompare(b.title));
-  const labs = [...keep('nsfLabs', 'labs', 'nsf'), ...keep('nihLabs', 'labs', 'nih')].sort((a, b) =>
-    (b.awardDate || '').localeCompare(a.awardDate || ''),
-  );
+  // Joint grants appear once per university; keep one card per professor and project.
+  const labMap = new Map();
+  for (const l of [...keep('nsfLabs', 'labs', 'nsf'), ...keep('nihLabs', 'labs', 'nih')]) {
+    const key = `${l.pi.toLowerCase()}|${l.title.toLowerCase()}`;
+    if (!labMap.has(key)) labMap.set(key, l);
+  }
+  const labs = [...labMap.values()].sort((a, b) => (b.awardDate || '').localeCompare(a.awardDate || ''));
   const okCount = Object.values(report.sources).filter((s) => s.ok).length;
   const summary = {
     generatedAt: new Date().toISOString(),
