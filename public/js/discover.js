@@ -35,7 +35,6 @@ const blank = () => ({
 });
 const prefs = blank();
 const refine = { open: false, funding: false, official: false, closed: false };
-let results = [];
 let lastQuery = null;
 let loading = false;
 
@@ -195,6 +194,13 @@ function openPicker(slot) {
 }
 
 // ---- Search ----------------------------------------------------------------
+// Internships come first from the free nightly catalog of employer job boards.
+// The paid web search (Tavily) runs for research, for "research or internships",
+// and on request when a student wants more than the catalog has.
+let config = { searchConfigured: false, internships: { size: 0 } };
+let listings = [];
+let web = { state: 'idle', results: [], error: '', queries: [], warnings: '' };
+
 function searchInput() {
   return {
     q: $('query').value,
@@ -225,6 +231,58 @@ function skeletons() {
   }
 }
 
+const catalogReady = () => (config.internships?.size || 0) > 0;
+
+async function fetchListings(input) {
+  const params = new URLSearchParams({
+    q: input.q,
+    city: input.city,
+    state: input.state,
+    radius: String(input.radius || ''),
+    remote: String(!!input.remote),
+    season: input.season,
+  });
+  const res = await fetch('/api/internships?' + params, { signal: AbortSignal.timeout(15000) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Internship search failed.');
+  return data.results || [];
+}
+
+async function runWeb(input) {
+  web = { state: 'loading', results: [], error: '', queries: [], warnings: '' };
+  renderResults();
+  const started = Date.now();
+  const timer = setInterval(() => renderStatus(started), 1000);
+  try {
+    const res = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Search-Access-Code': $('access-code').value },
+      body: JSON.stringify(input),
+      signal: AbortSignal.timeout(65000),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Web search could not complete. Try again.');
+    web = {
+      state: 'done',
+      results: Array.isArray(data.results) ? data.results : [],
+      error: '',
+      queries: data.queries || [],
+      warnings: [...(data.warnings || []), data.notice].filter(Boolean).join(' '),
+    };
+  } catch (e) {
+    web = {
+      state: 'error',
+      results: [],
+      error: e.name === 'TimeoutError' ? 'The web search took too long. Try a narrower sentence.' : e.message,
+      queries: [],
+      warnings: '',
+    };
+  } finally {
+    clearInterval(timer);
+  }
+  renderResults();
+}
+
 async function runSearch() {
   if (loading) return;
   const input = searchInput();
@@ -235,58 +293,62 @@ async function runSearch() {
   }
   loading = true;
   lastQuery = input;
-  results = [];
+  listings = [];
+  web = { state: 'idle', results: [], error: '', queries: [], warnings: '' };
   $('starters').hidden = true;
-  $('empty').hidden = true;
-  $('results-tools').hidden = true;
-  $('search-details').hidden = true;
-  $('warnings').textContent = '';
   $('submit').disabled = true;
   $('result-title').textContent = 'Searching…';
+  $('status').textContent = '';
   skeletons();
-  const started = Date.now();
-  const tick = () =>
-    ($('status').textContent = `Searching the web and reading pages. This takes up to a minute (${Math.floor((Date.now() - started) / 1000)}s).`);
-  tick();
-  const timer = setInterval(tick, 1000);
   document.querySelector('.results').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
-  let error = null;
-  try {
-    const res = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Search-Access-Code': $('access-code').value },
-      body: JSON.stringify(input),
-      signal: AbortSignal.timeout(65000),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || 'Search could not complete. Try again.');
-    results = Array.isArray(data.results) ? data.results : [];
-    $('warnings').textContent = [...(data.warnings || []), data.notice].filter(Boolean).join(' ');
-    $('query-list').replaceChildren(...(data.queries || []).map((q) => el('li', q)));
-    $('search-details').hidden = !(data.queries || []).length;
-  } catch (e) {
-    error = e.name === 'TimeoutError' ? 'The search took too long. Try a narrower sentence.' : e.message;
-  } finally {
-    clearInterval(timer);
-    loading = false;
-    $('submit').disabled = false;
-  }
-  renderResults(error);
+
+  const useCatalog = input.type !== 'research' && catalogReady();
+  const useWeb = config.searchConfigured && (input.type !== 'internship' || !useCatalog);
+  const jobs = [];
+  if (useCatalog)
+    jobs.push(
+      fetchListings(input)
+        .then((r) => (listings = r))
+        .catch(() => (listings = []))
+        .then(() => renderResults()),
+    );
+  if (useWeb) jobs.push(runWeb(input));
+  if (!useCatalog && !useWeb) web = { state: 'error', results: [], error: 'Search is unavailable right now. Try again later.', queries: [], warnings: '' };
+  await Promise.all(jobs);
+  loading = false;
+  $('submit').disabled = false;
+  renderResults();
 }
 
-function renderResults(error) {
-  const cards = $('cards');
-  cards.replaceChildren();
+function renderStatus(webStarted) {
   if (!lastQuery) return;
-  if (error) {
-    $('result-title').textContent = 'Search didn’t finish';
-    $('status').textContent = error;
-    $('empty').hidden = true;
-    return;
+  const parts = [];
+  if (listings.length) parts.push(`${listings.length} live ${listings.length === 1 ? 'posting' : 'postings'} from employer job boards`);
+  if (web.state === 'loading') {
+    const secs = webStarted ? ` (${Math.floor((Date.now() - webStarted) / 1000)}s)` : '';
+    parts.push(`searching the web, which takes up to a minute${secs}`);
+  } else if (web.state === 'done') {
+    parts.push(`${web.results.length} from the web`);
   }
-  const shown = results.filter(
+  const where = [
+    TYPES.find(([v]) => v === lastQuery.type)[1],
+    placePhrase(),
+    (SEASONS.find(([v]) => v === lastQuery.season) || SEASONS[0])[1],
+  ].join(', ');
+  const text = (parts.length ? parts.join('; ') + '. ' : '') + `Looking for ${where}.`;
+  $('status').textContent = text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function renderResults() {
+  const cards = $('cards');
+  if (!lastQuery) return;
+  const seen = new Set();
+  const all = [...listings, ...web.results].filter((r) => (seen.has(r.url) ? false : seen.add(r.url)));
+  const stillLoading = loading && (web.state === 'loading' || (!listings.length && web.state === 'idle'));
+
+  const shown = all.filter(
     (r) =>
-      (!refine.open || r.status === 'open_signal') &&
+      (!refine.open || r.status === 'open_signal' || r.status === 'live_posting') &&
       (refine.closed || r.status !== 'closed_signal') &&
       (!refine.funding || !!r.fundingEvidence) &&
       (!refine.official || r.officialHint),
@@ -295,27 +357,57 @@ function renderResults(error) {
   if (sort === 'title') shown.sort((a, b) => a.title.localeCompare(b.title));
   if (sort === 'source') shown.sort((a, b) => Number(!!b.officialHint) - Number(!!a.officialHint));
 
-  $('results-tools').hidden = results.length === 0;
-  $('result-title').textContent = `${shown.length} ${shown.length === 1 ? 'result' : 'results'} for ${lastQuery.q.trim()}`;
-  $('status').textContent = [
-    TYPES.find(([v]) => v === lastQuery.type)[1],
-    placePhrase(),
-    (SEASONS.find(([v]) => v === lastQuery.season) || SEASONS[0])[1],
-  ].join(', ').replace(/^./, (c) => c.toUpperCase()) + '.';
+  $('results-tools').hidden = all.length === 0;
+  $('result-title').textContent =
+    stillLoading && !all.length
+      ? 'Searching…'
+      : `${shown.length} ${shown.length === 1 ? 'result' : 'results'} for ${lastQuery.q.trim()}`;
+  renderStatus();
+  $('warnings').textContent = web.state === 'error' ? web.error : web.warnings;
+  $('query-list').replaceChildren(...web.queries.map((q) => el('li', q)));
+  $('search-details').hidden = !web.queries.length;
+  $('web-more').hidden = !(
+    !loading &&
+    config.searchConfigured &&
+    web.state === 'idle' &&
+    lastQuery.type === 'internship'
+  );
+  $('web-more-text').textContent = listings.length
+    ? 'These are live postings from employer job boards. Small and local employers often post elsewhere.'
+    : 'No live postings match on employer job boards we check. The web may have more.';
 
+  if (stillLoading && !all.length) return; // keep the skeletons
+  const prevIds = new Set([...cards.querySelectorAll('.card[data-id]')].map((c) => c.dataset.id));
+  cards.replaceChildren();
   shown.forEach((r, i) => {
     const card = opportunityCard(r);
-    card.style.setProperty('--i', Math.min(i, 8));
-    card.classList.add('enter');
+    card.dataset.id = r.id;
+    if (!prevIds.has(r.id)) {
+      card.style.setProperty('--i', Math.min(i, 8));
+      card.classList.add('enter');
+    }
     cards.append(card);
   });
-  const empty = shown.length === 0;
+  if (web.state === 'loading') {
+    for (let i = 0; i < 3; i++) {
+      const sk = el('div', null, 'card skeleton');
+      sk.append(el('span'), el('span'), el('span'), el('span'));
+      cards.append(sk);
+    }
+  }
+  const empty = !stillLoading && shown.length === 0;
   $('empty').hidden = !empty;
   if (empty) {
-    $('empty-title').textContent = results.length ? 'Nothing matches these filters' : 'No results for this sentence';
-    $('empty-text').textContent = results.length
+    $('empty-title').textContent = all.length
+      ? 'Nothing matches these filters'
+      : web.state === 'error' && !listings.length
+        ? 'Search didn’t finish'
+        : 'No results for this sentence';
+    $('empty-text').textContent = all.length
       ? 'Turn off a filter above to see the other results.'
-      : 'Try a broader field, a bigger area, or fewer preferences.';
+      : web.state === 'error' && !listings.length
+        ? web.error
+        : 'Try a broader field, a bigger area, or fewer preferences.';
   }
 }
 
@@ -397,6 +489,15 @@ export function initDiscover() {
       runSearch();
     });
   $('use-profile').addEventListener('click', fillFromProfile);
+  $('web-more-button').addEventListener('click', async () => {
+    if (!lastQuery || loading) return;
+    loading = true;
+    $('submit').disabled = true;
+    await runWeb(lastQuery);
+    loading = false;
+    $('submit').disabled = false;
+    renderResults();
+  });
 
   // More filters drawer
   const drawer = $('drawer');
@@ -432,7 +533,8 @@ export function initDiscover() {
   cyclePlaceholder();
 }
 
-export function setSearchAvailability(config) {
-  $('setup').hidden = !!config.searchConfigured;
+export function setSearchAvailability(c) {
+  config = { ...config, ...c };
+  $('setup').hidden = !!config.searchConfigured || catalogReady();
   $('access').hidden = !config.accessCodeRequired;
 }
