@@ -1,11 +1,11 @@
 name: Collect internships
 
-# Every night, read employer job boards and refresh data/internships.json.
-# Free for public repositories. Committing the file triggers a Render redeploy,
-# which is how the live site picks up the new listings.
+# Every 4 hours, read employer job boards and refresh internships.json on the
+# `data` branch. The live site downloads it every 20 minutes, so no redeploy
+# is needed. Free for public repositories.
 on:
   schedule:
-    - cron: '17 9 * * *' # 09:17 UTC daily (early morning in the US)
+    - cron: '23 */4 * * *'
   workflow_dispatch:
   push:
     branches: [main]
@@ -19,7 +19,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: collect-internships
+  group: data-branch
   cancel-in-progress: false
 
 jobs:
@@ -28,19 +28,24 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+          path: out
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Collect
-        run: node scripts/collect-internships.mjs
-      - name: Commit if changed
+        run: |
+          cp out/internships.json data/internships.json 2>/dev/null || true
+          node scripts/collect-internships.mjs --out out/internships.json
+      - name: Publish to the data branch
+        working-directory: out
         run: |
           git config user.name "fieldwork-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/internships.json data/internships-report.json
-          if git diff --cached --quiet; then
-            echo "No changes."
-          else
-            git commit -m "Update internship listings ($(date -u +%Y-%m-%d))"
-            git push
-          fi
+          git add internships.json internships-report.json
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git commit -m "Internships $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q origin data && git push -q origin HEAD:data && exit 0; sleep 5; done
+          exit 1

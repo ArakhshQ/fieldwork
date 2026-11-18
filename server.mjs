@@ -5,6 +5,8 @@ import path from 'node:path';
 import { timingSafeEqual } from 'node:crypto';
 import { createSearchService, SearchError } from './lib/search.mjs';
 import { createCatalog } from './lib/internships.mjs';
+import { createResearchCatalog } from './lib/research.mjs';
+import { dataUrlFor } from './lib/datasets.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
 
@@ -83,7 +85,8 @@ export function resolveStatic(pathname) {
 export function createApp({
   env = process.env,
   search = createSearchService({ apiKey: env.TAVILY_API_KEY }),
-  catalog = createCatalog(),
+  catalog = createCatalog({ remoteBase: dataUrlFor(env) }),
+  research = createResearchCatalog({ remoteBase: dataUrlFor(env) }),
   clock = () => Date.now(),
 } = {}) {
   let active = 0,
@@ -111,28 +114,31 @@ export function createApp({
     if (req.method === 'GET' && url.pathname === '/health')
       return send(200, { status: 'ok', searchConfigured: !!env.TAVILY_API_KEY });
 
-    if (req.method === 'GET' && url.pathname === '/api/internships') {
-      // Free catalog search: no provider calls, so only a light per-address limit.
+    if (req.method === 'GET' && (url.pathname === '/api/internships' || url.pathname === '/api/research')) {
+      // Free catalog searches: no provider calls, so only a light per-address limit.
       const ip = req.socket.remoteAddress || 'unknown';
       const b = catalogRates.get(ip) || { count: 0, until: clock() + 60000 };
       if (clock() > b.until) Object.assign(b, { count: 0, until: clock() + 60000 });
-      if (++b.count > 60) return send(429, { error: 'Too many searches. Wait a minute.', code: 'rate_limited' });
+      if (++b.count > 90) return send(429, { error: 'Too many searches. Wait a minute.', code: 'rate_limited' });
       catalogRates.set(ip, b);
       if (catalogRates.size > 10000) for (const [k, v] of catalogRates) if (v.until < clock()) catalogRates.delete(k);
       const param = (k, max) => (url.searchParams.get(k) || '').replace(/[\x00-\x1f]/g, ' ').trim().slice(0, max);
+      const query = {
+        q: param('q', 240),
+        city: param('city', 80),
+        state: param('state', 40),
+        radius: Math.min(Math.max(Number.parseInt(param('radius', 4), 10) || 0, 0), 500),
+        remote: url.searchParams.get('remote') === 'true',
+        season: param('season', 40),
+      };
       try {
-        const data = await catalog.search({
-          q: param('q', 240),
-          city: param('city', 80),
-          state: param('state', 40),
-          radius: Math.min(Math.max(Number.parseInt(param('radius', 4), 10) || 0, 0), 500),
-          remote: url.searchParams.get('remote') === 'true',
-          season: param('season', 40),
-          limit: 80,
-        });
+        const data =
+          url.pathname === '/api/research'
+            ? await research.search({ ...query, limit: 60 })
+            : await catalog.search({ ...query, limit: 80 });
         return send(200, data);
       } catch {
-        return send(500, { error: 'Internship search failed. Try again.' });
+        return send(500, { error: 'Search failed. Try again.' });
       }
     }
 
@@ -144,6 +150,7 @@ export function createApp({
         accounts:
           supabaseUrl && supabaseKey ? { url: supabaseUrl, key: supabaseKey } : null,
         internships: await catalog.info().catch(() => ({ size: 0, generatedAt: null })),
+        research: await research.info().catch(() => ({ programs: 0, labs: 0, generatedAt: null })),
       });
 
     if (req.method === 'POST' && url.pathname === '/api/search') {
@@ -251,6 +258,10 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     Number(process.env.PORT) || (portArg >= 0 ? Number(process.argv[portArg + 1]) : 3000);
   const host = hostArg >= 0 ? process.argv[hostArg + 1] : '0.0.0.0';
   const app = createApp();
-  app.listen(port, host, () => console.log('Fieldwork server ready'));
+  app.listen(port, host, () => {
+    console.log('Fieldwork server ready');
+    // Warm the catalogs so the first visitor doesn't wait for the download.
+    fetch(`http://127.0.0.1:${port}/api/config`).catch(() => {});
+  });
   process.on('SIGTERM', () => app.close(() => process.exit(0)));
 }

@@ -1,5 +1,5 @@
 // Discover: the sentence-style search, its pickers, filters and results.
-import { $, el, toast, fillStateSelect, stateAbbr, reducedMotion, closeOnBackdrop } from './ui.js';
+import { $, el, toast, fillStateSelect, stateAbbr, reducedMotion, closeOnBackdrop, ago } from './ui.js';
 import { getState } from './store.js';
 import { opportunityCard } from './cards.js';
 
@@ -194,12 +194,16 @@ function openPicker(slot) {
 }
 
 // ---- Search ----------------------------------------------------------------
-// Internships come first from the free nightly catalog of employer job boards.
-// The paid web search (Tavily) runs for research, for "research or internships",
-// and on request when a student wants more than the catalog has.
-let config = { searchConfigured: false, internships: { size: 0 } };
+// Three free catalogs refreshed on a schedule (internship postings, research
+// programs, newly funded labs) answer instantly; the web search adds anything
+// newer or smaller, live, for research and on request for internships.
+let config = { searchConfigured: false, internships: { size: 0 }, research: { programs: 0, labs: 0 } };
 let listings = [];
+let research = { programs: [], labs: [] };
 let web = { state: 'idle', results: [], error: '', queries: [], warnings: '' };
+const SHOW_STEP = { listings: 9, programs: 6, labs: 6, web: 24 };
+let shownCount = { ...SHOW_STEP };
+let counts = null; // what's actually shown after filters, for the status line
 
 function searchInput() {
   return {
@@ -220,21 +224,22 @@ function searchInput() {
   };
 }
 
-function skeletons() {
-  const cards = $('cards');
-  cards.replaceChildren();
-  for (let i = 0; i < 6; i++) {
+function skeletons(n = 6) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
     const s = el('div', null, 'card skeleton');
     s.style.setProperty('--i', i);
     s.append(el('span'), el('span'), el('span'), el('span'));
-    cards.append(s);
+    out.push(s);
   }
+  return out;
 }
 
-const catalogReady = () => (config.internships?.size || 0) > 0;
+const internshipsReady = () => (config.internships?.size || 0) > 0;
+const researchReady = () => (config.research?.programs || 0) + (config.research?.labs || 0) > 0;
 
-async function fetchListings(input) {
-  const params = new URLSearchParams({
+function catalogParams(input) {
+  return new URLSearchParams({
     q: input.q,
     city: input.city,
     state: input.state,
@@ -242,17 +247,19 @@ async function fetchListings(input) {
     remote: String(!!input.remote),
     season: input.season,
   });
-  const res = await fetch('/api/internships?' + params, { signal: AbortSignal.timeout(15000) });
+}
+
+async function getJson(url) {
+  const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Internship search failed.');
-  return data.results || [];
+  if (!res.ok) throw new Error(data.error || 'Search failed.');
+  return data;
 }
 
 async function runWeb(input) {
-  web = { state: 'loading', results: [], error: '', queries: [], warnings: '' };
+  web = { state: 'loading', results: [], error: '', queries: [], warnings: '', started: Date.now() };
   renderResults();
-  const started = Date.now();
-  const timer = setInterval(() => renderStatus(started), 1000);
+  const timer = setInterval(renderStatus, 1000);
   try {
     const res = await fetch('/api/search', {
       method: 'POST',
@@ -294,118 +301,180 @@ async function runSearch() {
   loading = true;
   lastQuery = input;
   listings = [];
+  research = { programs: [], labs: [] };
   web = { state: 'idle', results: [], error: '', queries: [], warnings: '' };
+  shownCount = { ...SHOW_STEP };
+  counts = null;
   $('starters').hidden = true;
   $('submit').disabled = true;
   $('result-title').textContent = 'Searching…';
   $('status').textContent = '';
-  skeletons();
+  $('cards').replaceChildren(...skeletons());
   document.querySelector('.results').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
 
-  const useCatalog = input.type !== 'research' && catalogReady();
-  const useWeb = config.searchConfigured && (input.type !== 'internship' || !useCatalog);
+  const useInternships = input.type !== 'research' && internshipsReady();
+  const useResearch = input.type !== 'internship' && researchReady();
+  const useWeb = config.searchConfigured && (input.type !== 'internship' || !useInternships);
   const jobs = [];
-  if (useCatalog)
+  const params = catalogParams(input);
+  if (useInternships)
     jobs.push(
-      fetchListings(input)
-        .then((r) => (listings = r))
+      getJson('/api/internships?' + params)
+        .then((d) => (listings = d.results || []))
         .catch(() => (listings = []))
-        .then(() => renderResults()),
+        .then(renderResults),
+    );
+  if (useResearch)
+    jobs.push(
+      getJson('/api/research?' + params)
+        .then((d) => (research = { programs: d.programs?.results || [], labs: d.labs?.results || [] }))
+        .catch(() => (research = { programs: [], labs: [] }))
+        .then(renderResults),
     );
   if (useWeb) jobs.push(runWeb(input));
-  if (!useCatalog && !useWeb) web = { state: 'error', results: [], error: 'Search is unavailable right now. Try again later.', queries: [], warnings: '' };
+  if (!jobs.length)
+    web = { state: 'error', results: [], error: 'Search is unavailable right now. Try again later.', queries: [], warnings: '' };
   await Promise.all(jobs);
   loading = false;
   $('submit').disabled = false;
   renderResults();
 }
 
-function renderStatus(webStarted) {
+function renderStatus() {
   if (!lastQuery) return;
   const parts = [];
-  if (listings.length) parts.push(`${listings.length} live ${listings.length === 1 ? 'posting' : 'postings'} from employer job boards`);
+  const n = (count, one, many) => `${count} ${count === 1 ? one : many}`;
+  const c = counts || { listings: listings.length, programs: research.programs.length, labs: research.labs.length, web: web.results.length };
+  if (c.listings) parts.push(n(c.listings, 'live internship posting', 'live internship postings'));
+  if (c.programs) parts.push(n(c.programs, 'research program', 'research programs'));
+  if (c.labs) parts.push(n(c.labs, 'newly funded lab', 'newly funded labs'));
   if (web.state === 'loading') {
-    const secs = webStarted ? ` (${Math.floor((Date.now() - webStarted) / 1000)}s)` : '';
-    parts.push(`searching the web, which takes up to a minute${secs}`);
-  } else if (web.state === 'done') {
-    parts.push(`${web.results.length} from the web`);
-  }
+    const secs = web.started ? ` (${Math.floor((Date.now() - web.started) / 1000)}s)` : '';
+    parts.push(`still searching the web${secs}`);
+  } else if (web.state === 'done') parts.push(n(c.web, 'page from the web', 'pages from the web'));
   const where = [
     TYPES.find(([v]) => v === lastQuery.type)[1],
     placePhrase(),
     (SEASONS.find(([v]) => v === lastQuery.season) || SEASONS[0])[1],
   ].join(', ');
-  const text = (parts.length ? parts.join('; ') + '. ' : '') + `Looking for ${where}.`;
+  const text = (parts.length ? parts.join(', ') + '. ' : '') + `Looking for ${where}.`;
   $('status').textContent = text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function passes(r) {
+  return (
+    (!refine.open || ['open_signal', 'live_posting', 'active_award'].includes(r.status)) &&
+    (refine.closed || r.status !== 'closed_signal') &&
+    (!refine.funding || !!r.fundingEvidence) &&
+    (!refine.official || r.officialHint)
+  );
+}
+
+function sorted(list) {
+  const out = list.filter(passes);
+  const sort = $('sort').value;
+  if (sort === 'title') out.sort((a, b) => a.title.localeCompare(b.title));
+  if (sort === 'source') out.sort((a, b) => Number(!!b.officialHint) - Number(!!a.officialHint));
+  return out;
+}
+
+function groupHead(title, note, count) {
+  const head = el('div', null, 'group-head');
+  const h = el('h3');
+  h.append(el('span', title), el('span', String(count), 'count'));
+  head.append(h, el('p', note, 'fine'));
+  return head;
 }
 
 function renderResults() {
   const cards = $('cards');
   if (!lastQuery) return;
   const seen = new Set();
-  const all = [...listings, ...web.results].filter((r) => (seen.has(r.url) ? false : seen.add(r.url)));
-  const stillLoading = loading && (web.state === 'loading' || (!listings.length && web.state === 'idle'));
+  const dedupe = (list) => list.filter((r) => (seen.has(r.url) ? false : seen.add(r.url)));
+  const groups = [
+    {
+      key: 'listings',
+      title: 'Live internship postings',
+      note: `Open roles on employer job boards. Checked ${ago(config.internships?.generatedAt)}.`,
+      items: sorted(dedupe(listings)),
+    },
+    {
+      key: 'programs',
+      title: 'Research programs',
+      note: `Programs with current NSF or NIH funding, including REU summer sites. Updated ${ago(config.research?.generatedAt)}.`,
+      items: sorted(dedupe(research.programs)),
+    },
+    {
+      key: 'labs',
+      title: 'Labs with new funding',
+      note: 'Professors who won a research grant in the last four months. They rarely post openings, so a short, specific email is the way in.',
+      items: refine.open ? [] : sorted(dedupe(research.labs)),
+    },
+    {
+      key: 'web',
+      title: 'From the web',
+      note: 'Pages found just now. Check each one for current dates.',
+      items: sorted(dedupe(web.results)),
+    },
+  ];
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  counts = Object.fromEntries(groups.map((g) => [g.key, g.items.length]));
+  const anyRaw = listings.length + research.programs.length + research.labs.length + web.results.length;
+  const waiting = loading && total === 0;
 
-  const shown = all.filter(
-    (r) =>
-      (!refine.open || r.status === 'open_signal' || r.status === 'live_posting') &&
-      (refine.closed || r.status !== 'closed_signal') &&
-      (!refine.funding || !!r.fundingEvidence) &&
-      (!refine.official || r.officialHint),
-  );
-  const sort = $('sort').value;
-  if (sort === 'title') shown.sort((a, b) => a.title.localeCompare(b.title));
-  if (sort === 'source') shown.sort((a, b) => Number(!!b.officialHint) - Number(!!a.officialHint));
-
-  $('results-tools').hidden = all.length === 0;
-  $('result-title').textContent =
-    stillLoading && !all.length
-      ? 'Searching…'
-      : `${shown.length} ${shown.length === 1 ? 'result' : 'results'} for ${lastQuery.q.trim()}`;
+  $('results-tools').hidden = anyRaw === 0;
+  $('result-title').textContent = waiting
+    ? 'Searching…'
+    : `${total} ${total === 1 ? 'result' : 'results'} for ${lastQuery.q.trim()}`;
   renderStatus();
   $('warnings').textContent = web.state === 'error' ? web.error : web.warnings;
   $('query-list').replaceChildren(...web.queries.map((q) => el('li', q)));
   $('search-details').hidden = !web.queries.length;
-  $('web-more').hidden = !(
-    !loading &&
-    config.searchConfigured &&
-    web.state === 'idle' &&
-    lastQuery.type === 'internship'
-  );
+  $('web-more').hidden = !(!loading && config.searchConfigured && web.state === 'idle' && lastQuery.type === 'internship');
   $('web-more-text').textContent = listings.length
-    ? 'These are live postings from employer job boards. Small and local employers often post elsewhere.'
-    : 'No live postings match on employer job boards we check. The web may have more.';
+    ? 'Small and local employers often post outside the job boards we check.'
+    : 'No live postings match on the employer job boards we check. The web may have more.';
 
-  if (stillLoading && !all.length) return; // keep the skeletons
+  if (waiting) return; // keep the skeletons
   const prevIds = new Set([...cards.querySelectorAll('.card[data-id]')].map((c) => c.dataset.id));
-  cards.replaceChildren();
-  shown.forEach((r, i) => {
-    const card = opportunityCard(r);
-    card.dataset.id = r.id;
-    if (!prevIds.has(r.id)) {
-      card.style.setProperty('--i', Math.min(i, 8));
-      card.classList.add('enter');
+  const nodes = [];
+  let i = 0;
+  for (const g of groups) {
+    const webLoading = g.key === 'web' && web.state === 'loading';
+    if (!g.items.length && !webLoading) continue;
+    nodes.push(groupHead(g.title, g.note, g.items.length));
+    for (const r of g.items.slice(0, shownCount[g.key])) {
+      const card = opportunityCard(r);
+      card.dataset.id = r.id;
+      if (!prevIds.has(r.id)) {
+        card.style.setProperty('--i', Math.min(i++, 8));
+        card.classList.add('enter');
+      }
+      nodes.push(card);
     }
-    cards.append(card);
-  });
-  if (web.state === 'loading') {
-    for (let i = 0; i < 3; i++) {
-      const sk = el('div', null, 'card skeleton');
-      sk.append(el('span'), el('span'), el('span'), el('span'));
-      cards.append(sk);
+    if (g.items.length > shownCount[g.key]) {
+      const more = el('button', `Show ${Math.min(SHOW_STEP[g.key] * 2, g.items.length - shownCount[g.key])} more`, 'button ghost show-more');
+      more.type = 'button';
+      more.addEventListener('click', () => {
+        shownCount[g.key] += SHOW_STEP[g.key] * 2;
+        renderResults();
+      });
+      nodes.push(more);
     }
+    if (webLoading) nodes.push(...skeletons(3));
   }
-  const empty = !stillLoading && shown.length === 0;
+  cards.replaceChildren(...nodes);
+  const empty = !loading && total === 0;
   $('empty').hidden = !empty;
   if (empty) {
-    $('empty-title').textContent = all.length
+    $('empty-title').textContent = anyRaw
       ? 'Nothing matches these filters'
-      : web.state === 'error' && !listings.length
+      : web.state === 'error'
         ? 'Search didn’t finish'
         : 'No results for this sentence';
-    $('empty-text').textContent = all.length
+    $('empty-text').textContent = anyRaw
       ? 'Turn off a filter above to see the other results.'
-      : web.state === 'error' && !listings.length
+      : web.state === 'error'
         ? web.error
         : 'Try a broader field, a bigger area, or fewer preferences.';
   }
@@ -535,6 +604,6 @@ export function initDiscover() {
 
 export function setSearchAvailability(c) {
   config = { ...config, ...c };
-  $('setup').hidden = !!config.searchConfigured || catalogReady();
+  $('setup').hidden = !!config.searchConfigured || internshipsReady() || researchReady();
   $('access').hidden = !config.accessCodeRequired;
 }

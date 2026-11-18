@@ -1,0 +1,47 @@
+name: Collect research
+
+# Daily: NSF REU sites, NIH undergraduate programs, and labs with grants from
+# the last 120 days, written to research.json on the `data` branch.
+on:
+  schedule:
+    - cron: '41 7 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/collect-research.mjs'
+      - '.github/workflows/collect-research.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-branch
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+          path: out
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Collect
+        run: node scripts/collect-research.mjs --out out/research.json
+      - name: Publish to the data branch
+        if: always()
+        working-directory: out
+        run: |
+          git config user.name "fieldwork-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research.json research-report.json 2>/dev/null || true
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git commit -m "Research $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do git pull --rebase -q origin data && git push -q origin HEAD:data && exit 0; sleep 5; done
+          exit 1

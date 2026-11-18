@@ -724,6 +724,9 @@ label.check input {
 .card.kind-research {
   border-top-color: var(--ink);
 }
+.card.kind-lab {
+  border-top-color: var(--hl);
+}
 .card.kind-internship {
   border-top-color: var(--moss);
 }
@@ -746,6 +749,8 @@ label.check input {
   font-size: 0.84rem;
 }
 .kind {
+  flex: none;
+  white-space: nowrap;
   font-weight: 700;
   color: var(--ink);
 }
@@ -937,6 +942,38 @@ label.check input {
 }
 .empty .button {
   margin-top: 8px;
+}
+.group-head {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 4px;
+  margin-top: 18px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.group-head:first-child {
+  margin-top: 0;
+}
+.group-head h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.35rem;
+}
+.group-head .count {
+  font-family: var(--sans);
+}
+.group-head .fine {
+  max-width: 70ch;
+}
+.show-more {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.card-link {
+  width: fit-content;
+  font-size: 0.88rem;
+  font-weight: 600;
 }
 .web-more {
   display: flex;
