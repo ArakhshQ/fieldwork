@@ -3,6 +3,7 @@ import { el, externalLink, shortDate, toast } from './ui.js';
 import { isSaved, toggleSave, track } from './store.js';
 
 const SIGNALS = {
+  live_posting: ['open', 'Live job posting'],
   open_signal: ['open', 'Open wording found'],
   closed_signal: ['closed', 'Says applications are closed'],
 };
@@ -59,7 +60,9 @@ export function opportunityCard(r, opts = {}) {
   const card = el('article', null, `card kind-${kind}`);
 
   const head = el('div', null, 'card-head');
-  head.append(el('span', r.kind || 'Opportunity', 'kind'), el('span', r.host || '', 'host'));
+  head.append(el('span', r.kind || 'Opportunity', 'kind'));
+  if (r.season) head.append(el('span', r.season, 'season'));
+  head.append(el('span', r.host || '', 'host'));
   if (opts.select) {
     const label = el('label', null, 'pick');
     const box = el('input');
@@ -102,7 +105,11 @@ export function opportunityCard(r, opts = {}) {
 
   const foot = el('div', null, 'card-foot');
   foot.append(
-    el('span', r.savedAt ? `Saved ${shortDate(r.savedAt)}` : `Found ${shortDate(r.foundAt)}`, 'fine'),
+    el(
+      'span',
+      r.savedAt ? `Saved ${shortDate(r.savedAt)}` : r.postedAt ? `Posted ${shortDate(r.postedAt)}` : `Found ${shortDate(r.foundAt)}`,
+      'fine',
+    ),
     trackButton(r),
   );
   card.append(foot);

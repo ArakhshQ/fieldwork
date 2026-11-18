@@ -1,0 +1,525 @@
+{
+ "note": "Employers whose public job boards are checked nightly for internships. Add {name, ats, token}; ats is greenhouse, lever or ashby. The token is the board name in the job-board URL.",
+ "employers": [
+  {
+   "name": "Airbnb",
+   "ats": "greenhouse",
+   "token": "airbnb"
+  },
+  {
+   "name": "Stripe",
+   "ats": "greenhouse",
+   "token": "stripe"
+  },
+  {
+   "name": "Dropbox",
+   "ats": "greenhouse",
+   "token": "dropbox"
+  },
+  {
+   "name": "Figma",
+   "ats": "greenhouse",
+   "token": "figma"
+  },
+  {
+   "name": "Databricks",
+   "ats": "greenhouse",
+   "token": "databricks"
+  },
+  {
+   "name": "Robinhood",
+   "ats": "greenhouse",
+   "token": "robinhood"
+  },
+  {
+   "name": "Pinterest",
+   "ats": "greenhouse",
+   "token": "pinterest"
+  },
+  {
+   "name": "Lyft",
+   "ats": "greenhouse",
+   "token": "lyft"
+  },
+  {
+   "name": "Instacart",
+   "ats": "greenhouse",
+   "token": "instacart"
+  },
+  {
+   "name": "Coinbase",
+   "ats": "greenhouse",
+   "token": "coinbase"
+  },
+  {
+   "name": "Reddit",
+   "ats": "greenhouse",
+   "token": "reddit"
+  },
+  {
+   "name": "Discord",
+   "ats": "greenhouse",
+   "token": "discord"
+  },
+  {
+   "name": "Asana",
+   "ats": "greenhouse",
+   "token": "asana"
+  },
+  {
+   "name": "Anthropic",
+   "ats": "greenhouse",
+   "token": "anthropic"
+  },
+  {
+   "name": "Datadog",
+   "ats": "greenhouse",
+   "token": "datadog"
+  },
+  {
+   "name": "Squarespace",
+   "ats": "greenhouse",
+   "token": "squarespace"
+  },
+  {
+   "name": "MongoDB",
+   "ats": "greenhouse",
+   "token": "mongodb"
+  },
+  {
+   "name": "Twilio",
+   "ats": "greenhouse",
+   "token": "twilio"
+  },
+  {
+   "name": "Cloudflare",
+   "ats": "greenhouse",
+   "token": "cloudflare"
+  },
+  {
+   "name": "GitLab",
+   "ats": "greenhouse",
+   "token": "gitlab"
+  },
+  {
+   "name": "Toast",
+   "ats": "greenhouse",
+   "token": "toast"
+  },
+  {
+   "name": "Affirm",
+   "ats": "greenhouse",
+   "token": "affirm"
+  },
+  {
+   "name": "Samsara",
+   "ats": "greenhouse",
+   "token": "samsara"
+  },
+  {
+   "name": "Scale AI",
+   "ats": "greenhouse",
+   "token": "scaleai"
+  },
+  {
+   "name": "Roblox",
+   "ats": "greenhouse",
+   "token": "roblox"
+  },
+  {
+   "name": "Waymo",
+   "ats": "greenhouse",
+   "token": "waymo"
+  },
+  {
+   "name": "Gusto",
+   "ats": "greenhouse",
+   "token": "gusto"
+  },
+  {
+   "name": "Chime",
+   "ats": "greenhouse",
+   "token": "chime"
+  },
+  {
+   "name": "Okta",
+   "ats": "greenhouse",
+   "token": "okta"
+  },
+  {
+   "name": "Twitch",
+   "ats": "greenhouse",
+   "token": "twitch"
+  },
+  {
+   "name": "Duolingo",
+   "ats": "greenhouse",
+   "token": "duolingo"
+  },
+  {
+   "name": "Peloton",
+   "ats": "greenhouse",
+   "token": "peloton"
+  },
+  {
+   "name": "Betterment",
+   "ats": "greenhouse",
+   "token": "betterment"
+  },
+  {
+   "name": "Oscar Health",
+   "ats": "greenhouse",
+   "token": "oscar"
+  },
+  {
+   "name": "Flatiron Health",
+   "ats": "greenhouse",
+   "token": "flatironhealth"
+  },
+  {
+   "name": "Justworks",
+   "ats": "greenhouse",
+   "token": "justworks"
+  },
+  {
+   "name": "Zocdoc",
+   "ats": "greenhouse",
+   "token": "zocdoc"
+  },
+  {
+   "name": "SeatGeek",
+   "ats": "greenhouse",
+   "token": "seatgeek"
+  },
+  {
+   "name": "Braze",
+   "ats": "greenhouse",
+   "token": "braze"
+  },
+  {
+   "name": "Klaviyo",
+   "ats": "greenhouse",
+   "token": "klaviyo"
+  },
+  {
+   "name": "Formlabs",
+   "ats": "greenhouse",
+   "token": "formlabs"
+  },
+  {
+   "name": "PathAI",
+   "ats": "greenhouse",
+   "token": "pathai"
+  },
+  {
+   "name": "Ginkgo Bioworks",
+   "ats": "greenhouse",
+   "token": "ginkgobioworks"
+  },
+  {
+   "name": "Recursion",
+   "ats": "greenhouse",
+   "token": "recursionpharmaceuticals"
+  },
+  {
+   "name": "Nuro",
+   "ats": "greenhouse",
+   "token": "nuro"
+  },
+  {
+   "name": "Anduril",
+   "ats": "greenhouse",
+   "token": "andurilindustries"
+  },
+  {
+   "name": "Flexport",
+   "ats": "greenhouse",
+   "token": "flexport"
+  },
+  {
+   "name": "Nextdoor",
+   "ats": "greenhouse",
+   "token": "nextdoor"
+  },
+  {
+   "name": "Brex",
+   "ats": "greenhouse",
+   "token": "brex"
+  },
+  {
+   "name": "Carta",
+   "ats": "greenhouse",
+   "token": "carta"
+  },
+  {
+   "name": "Faire",
+   "ats": "greenhouse",
+   "token": "faire"
+  },
+  {
+   "name": "Webflow",
+   "ats": "greenhouse",
+   "token": "webflow"
+  },
+  {
+   "name": "Intercom",
+   "ats": "greenhouse",
+   "token": "intercom"
+  },
+  {
+   "name": "Vercel",
+   "ats": "greenhouse",
+   "token": "vercel"
+  },
+  {
+   "name": "Hudson River Trading",
+   "ats": "greenhouse",
+   "token": "wehrtyou"
+  },
+  {
+   "name": "IMC Trading",
+   "ats": "greenhouse",
+   "token": "imc"
+  },
+  {
+   "name": "Point72",
+   "ats": "greenhouse",
+   "token": "point72"
+  },
+  {
+   "name": "Jump Trading",
+   "ats": "greenhouse",
+   "token": "jumptrading"
+  },
+  {
+   "name": "The New York Times",
+   "ats": "greenhouse",
+   "token": "thenewyorktimes"
+  },
+  {
+   "name": "Zipline",
+   "ats": "greenhouse",
+   "token": "flyzipline"
+  },
+  {
+   "name": "Relativity Space",
+   "ats": "greenhouse",
+   "token": "relativity"
+  },
+  {
+   "name": "Planet",
+   "ats": "greenhouse",
+   "token": "planetlabs"
+  },
+  {
+   "name": "Palantir",
+   "ats": "lever",
+   "token": "palantir"
+  },
+  {
+   "name": "Shield AI",
+   "ats": "lever",
+   "token": "shieldai"
+  },
+  {
+   "name": "Ramp",
+   "ats": "ashby",
+   "token": "ramp"
+  },
+  {
+   "name": "OpenAI",
+   "ats": "ashby",
+   "token": "openai"
+  },
+  {
+   "name": "Notion",
+   "ats": "ashby",
+   "token": "notion"
+  },
+  {
+   "name": "Linear",
+   "ats": "ashby",
+   "token": "linear"
+  },
+  {
+   "name": "Vanta",
+   "ats": "ashby",
+   "token": "vanta"
+  },
+  {
+   "name": "Replit",
+   "ats": "ashby",
+   "token": "replit"
+  },
+  {
+   "name": "Harvey",
+   "ats": "ashby",
+   "token": "harvey"
+  },
+  {
+   "name": "Hex",
+   "ats": "ashby",
+   "token": "hex"
+  },
+  {
+   "name": "Mercury",
+   "ats": "ashby",
+   "token": "mercury"
+  },
+  {
+   "name": "Perplexity",
+   "ats": "ashby",
+   "token": "perplexity"
+  },
+  {
+   "name": "Modal",
+   "ats": "ashby",
+   "token": "modal"
+  },
+  {
+   "name": "Clay",
+   "ats": "ashby",
+   "token": "claylabs"
+  },
+  {
+   "name": "Runway",
+   "ats": "ashby",
+   "token": "runway"
+  },
+  {
+   "name": "ElevenLabs",
+   "ats": "ashby",
+   "token": "elevenlabs"
+  },
+  {
+   "name": "Cohere",
+   "ats": "ashby",
+   "token": "cohere"
+  },
+  {
+   "name": "SpaceX",
+   "ats": "greenhouse",
+   "token": "spacex"
+  },
+  {
+   "name": "DoorDash",
+   "ats": "greenhouse",
+   "token": "doordashusa"
+  },
+  {
+   "name": "Neuralink",
+   "ats": "greenhouse",
+   "token": "neuralink"
+  },
+  {
+   "name": "Astranis",
+   "ats": "greenhouse",
+   "token": "astranis"
+  },
+  {
+   "name": "Redwood Materials",
+   "ats": "greenhouse",
+   "token": "redwoodmaterials"
+  },
+  {
+   "name": "Verkada",
+   "ats": "greenhouse",
+   "token": "verkada"
+  },
+  {
+   "name": "Generate Biomedicines",
+   "ats": "greenhouse",
+   "token": "generatebiomedicines"
+  },
+  {
+   "name": "Cellarity",
+   "ats": "greenhouse",
+   "token": "cellarity"
+  },
+  {
+   "name": "Twist Bioscience",
+   "ats": "greenhouse",
+   "token": "twistbioscience"
+  },
+  {
+   "name": "Freenome",
+   "ats": "greenhouse",
+   "token": "freenome"
+  },
+  {
+   "name": "Chan Zuckerberg Initiative",
+   "ats": "greenhouse",
+   "token": "chanzuckerberginitiative"
+  },
+  {
+   "name": "AbCellera",
+   "ats": "greenhouse",
+   "token": "abcellera"
+  },
+  {
+   "name": "Tower Research",
+   "ats": "greenhouse",
+   "token": "towerresearchcapital"
+  },
+  {
+   "name": "Akuna Capital",
+   "ats": "greenhouse",
+   "token": "akunacapital"
+  },
+  {
+   "name": "Optiver",
+   "ats": "greenhouse",
+   "token": "optiverus"
+  },
+  {
+   "name": "Squarepoint",
+   "ats": "greenhouse",
+   "token": "squarepointcapital"
+  },
+  {
+   "name": "Clear Street",
+   "ats": "greenhouse",
+   "token": "clearstreet"
+  },
+  {
+   "name": "Flow Traders",
+   "ats": "greenhouse",
+   "token": "flowtraders"
+  },
+  {
+   "name": "Virtu",
+   "ats": "greenhouse",
+   "token": "virtu"
+  },
+  {
+   "name": "Yext",
+   "ats": "greenhouse",
+   "token": "yext"
+  },
+  {
+   "name": "Zoox",
+   "ats": "lever",
+   "token": "zoox"
+  },
+  {
+   "name": "Physical Intelligence",
+   "ats": "ashby",
+   "token": "physicalintelligence"
+  },
+  {
+   "name": "Sierra",
+   "ats": "ashby",
+   "token": "sierra"
+  },
+  {
+   "name": "Decagon",
+   "ats": "ashby",
+   "token": "decagon"
+  },
+  {
+   "name": "Zip",
+   "ats": "ashby",
+   "token": "zip"
+  }
+ ]
+}

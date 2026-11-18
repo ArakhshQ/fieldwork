@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { timingSafeEqual } from 'node:crypto';
 import { createSearchService, SearchError } from './lib/search.mjs';
+import { createCatalog } from './lib/internships.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
 
@@ -82,12 +83,14 @@ export function resolveStatic(pathname) {
 export function createApp({
   env = process.env,
   search = createSearchService({ apiKey: env.TAVILY_API_KEY }),
+  catalog = createCatalog(),
   clock = () => Date.now(),
 } = {}) {
   let active = 0,
     day = '',
     daily = 0;
   const rates = new Map();
+  const catalogRates = new Map();
   const maxDaily = Number(env.MAX_SEARCHES_PER_DAY) || 100,
     maxConcurrent = Number(env.MAX_CONCURRENT_SEARCHES) || 3;
   const headers = securityHeaders(env);
@@ -108,6 +111,31 @@ export function createApp({
     if (req.method === 'GET' && url.pathname === '/health')
       return send(200, { status: 'ok', searchConfigured: !!env.TAVILY_API_KEY });
 
+    if (req.method === 'GET' && url.pathname === '/api/internships') {
+      // Free catalog search: no provider calls, so only a light per-address limit.
+      const ip = req.socket.remoteAddress || 'unknown';
+      const b = catalogRates.get(ip) || { count: 0, until: clock() + 60000 };
+      if (clock() > b.until) Object.assign(b, { count: 0, until: clock() + 60000 });
+      if (++b.count > 60) return send(429, { error: 'Too many searches. Wait a minute.', code: 'rate_limited' });
+      catalogRates.set(ip, b);
+      if (catalogRates.size > 10000) for (const [k, v] of catalogRates) if (v.until < clock()) catalogRates.delete(k);
+      const param = (k, max) => (url.searchParams.get(k) || '').replace(/[\x00-\x1f]/g, ' ').trim().slice(0, max);
+      try {
+        const data = await catalog.search({
+          q: param('q', 240),
+          city: param('city', 80),
+          state: param('state', 40),
+          radius: Math.min(Math.max(Number.parseInt(param('radius', 4), 10) || 0, 0), 500),
+          remote: url.searchParams.get('remote') === 'true',
+          season: param('season', 40),
+          limit: 80,
+        });
+        return send(200, data);
+      } catch {
+        return send(500, { error: 'Internship search failed. Try again.' });
+      }
+    }
+
     if (req.method === 'GET' && url.pathname === '/api/config')
       return send(200, {
         searchConfigured: !!env.TAVILY_API_KEY,
@@ -115,6 +143,7 @@ export function createApp({
         // Publishable values only: safe for the browser by design.
         accounts:
           supabaseUrl && supabaseKey ? { url: supabaseUrl, key: supabaseKey } : null,
+        internships: await catalog.info().catch(() => ({ size: 0, generatedAt: null })),
       });
 
     if (req.method === 'POST' && url.pathname === '/api/search') {
