@@ -1,12 +1,298 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Find your next internship or research opportunity. Explore, compare, save and plan your applications with Fieldwork."><title>Fieldwork — Your future starts with a little curiosity</title><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script><script src="/workspace.js" defer></script></head><body>
-<a class="skip" href="#main">Skip to content</a><header><a class="brand" href="/"><span class="brand-icon">f›</span>fieldwork<span class="beta">STUDENT EDITION</span></a><nav aria-label="Main navigation"><button id="explore" class="nav-active">Discover</button><button id="saved">Saved <span id="save-count">0</span></button><button id="track-nav">Applications</button><button id="plans-nav">Plans</button></nav><button id="profile-nav" class="secondary">Your profile ›</button></header>
-<main id="main"><section class="hero"><div><div class="eyebrow">A LITTLE CURIOSITY. A WHOLE NEW CHAPTER.</div><h1>Big ambitions.<br><em>Meet your next move.</em></h1><p>Find internships and research that take you places.<br>Discover your options. Make a shortlist. Go for it.</p><div class="hero-tags"><span>✦ Free to explore</span><span>› Direct application links</span><span>♡ Built for students</span></div></div><div class="hero-art" aria-hidden="true"><div class="art-ring"></div><div class="art-star">✳</div><div class="art-card card-a"><span>YOUR NEXT CHAPTER</span><strong>From “what if”<br>to “I got in.”</strong><i>Research · Internships · Possibility</i></div><div class="art-card card-b">✦ &nbsp; Find your kind of opportunity.</div><div class="orbit-label">GOOD THINGS START WITH CURIOSITY ›</div></div></section>
-<section class="search-panel" aria-label="Opportunity search"><form id="search-form"><span class="search-symbol" aria-hidden="true">⌕</span><input id="query" aria-label="Search opportunities" required minlength="2" maxlength="240" placeholder="What do you want to explore? Biology, design, software…"><button class="primary" id="submit">Find my next move ›</button></form><div class="suggestions"><span>Try a direction</span><button data-query="biology summer research 2027">🧬 Biology research</button><button data-query="software engineering internship">⌘ Software internships</button><button data-query="design internship no experience">✦ Creative careers</button><button id="profile-search">✧ Use my profile</button></div></section>
-<div id="setup" class="setup" hidden>Search is temporarily unavailable. Please check back shortly. <button id="setup-details">Details</button></div>
-<div class="workspace" id="discover-workspace"><aside><div class="filter-title"><strong>Find your fit</strong><button id="reset">Reset</button></div><p class="small">Set preferences, then search.</p><label for="location">Location</label><input id="location" placeholder="City, state, or country" maxlength="100"><label for="type">Opportunity</label><select id="type"><option value="all">Research & internships</option><option value="research">Research</option><option value="internship">Internships</option></select><label for="level">Study level</label><select id="level"><option value="">Any study level</option><option>Undergraduate</option><option>Master’s</option><option>PhD</option><option>Recent graduate</option></select><label for="season">When?</label><select id="season"><option value="">Any time</option><option>Summer 2027</option><option>Spring 2027</option><option>Fall 2027</option><option>Year-round</option></select><label for="experience">Experience</label><select id="experience"><option value="">Any experience</option><option>No experience required</option><option>Some relevant experience</option></select><label class="check"><input id="remote" type="checkbox"> Prefer remote</label><label class="check"><input id="paid" type="checkbox"> Prefer paid / funded</label><label class="check"><input id="housing" type="checkbox"> Housing support</label><label class="check"><input id="international" type="checkbox"> International applicants</label><details><summary>More search options</summary><label for="duration">Duration</label><select id="duration"><option value="">Any duration</option><option>4–8 weeks</option><option>8–12 weeks</option><option>3–6 months</option></select><label class="check"><input id="social" type="checkbox"> Include community leads</label></details><p class="small">Preferences guide discovery. Requirements may be unstated; check each source.</p><div class="divider"></div><strong>Refine these results</strong><label class="check"><input id="signals" type="checkbox"> Open wording found</label><label class="check"><input id="closed" type="checkbox"> Include closed wording</label><label class="check"><input id="funded-filter" type="checkbox"> Funding excerpt available</label><label class="check"><input id="official-filter" type="checkbox"> Institution / hiring sources</label><div id="access" hidden><label for="access-code">Access code</label><input id="access-code" type="password" autocomplete="off"></div><div class="side-note"><span>✧</span><h3>You bring the curiosity.</h3><p>Keep your favorites together and take the next step at your own pace.</p><button id="how">A few useful tips ›</button></div><button id="sources" hidden>Sources</button></aside>
-<section class="results"><div class="results-header"><div><div class="eyebrow muted">POSSIBILITY STARTS HERE</div><h2 id="result-title">Where do you want to go?</h2></div><button id="again" class="secondary" hidden>Search again ↻</button></div><div id="status" class="feed-status" role="status" aria-live="polite">Your next opportunity could start with a few words.</div><div id="warnings" class="small" role="status"></div><div class="result-tools"><label for="sort">Sort by</label><select id="sort"><option value="relevance">Relevance</option><option value="title">Title A–Z</option><option value="source">Institution sources first</option></select><button id="compare" class="secondary">Compare saved</button></div><div id="initial" class="empty"><div class="empty-mark">✳</div><h3>There’s more than one way forward.</h3><p>Explore a field you love, a place you’re curious about,<br>or an opportunity you haven’t imagined yet.</p><div class="inspiration"><button data-query="climate science undergraduate research">01 <strong>Make a discovery</strong><span>Research & lab experience ›</span></button><button data-query="paid student internship">02 <strong>Try the real world</strong><span>Internships & practical skills ›</span></button><button data-query="remote internship no experience">03 <strong>Start from anywhere</strong><span>Remote & beginner-friendly ›</span></button></div></div><div id="cards" class="cards"></div><div id="empty" class="empty" hidden><h3 id="empty-title"></h3><p id="empty-description"></p></div><details id="search-details" hidden class="technical"><summary>Search details</summary><ul id="query-list"></ul></details></section></div>
-<section id="tracker-view" class="page-view" hidden><div class="eyebrow">SMALL STEPS, BIG POSSIBILITIES</div><h2>Your application journey</h2><p>Track the opportunities you choose. Statuses are updated by you.</p><div class="toolbar"><button id="add-application" class="primary">+ Add application</button><button id="export-data" class="secondary">Export my workspace</button></div><div id="tracker-board" class="board"></div></section>
-<section id="profile-view" class="page-view" hidden><div class="eyebrow">YOUR SEARCH, MORE PERSONAL</div><h2>A little about your ambitions.</h2><p>Saved on this device only. No account or document upload needed.</p><form id="profile-form" class="profile-grid"><label>Preferred name<input name="name" maxlength="60" placeholder="What should we call you?"></label><label>Major / field<input name="major" maxlength="100" placeholder="e.g. Computer science"></label><label>Study level<select name="level"><option value="">Select your level</option><option>Undergraduate</option><option>Master’s</option><option>PhD</option><option>Recent graduate</option></select></label><label>Preferred location<input name="location" maxlength="100" placeholder="e.g. California or Germany"></label><label class="full">Interests and skills<textarea name="interests" maxlength="400" placeholder="e.g. Machine learning, climate, Python"></textarea></label><label>Available from<input name="available" type="date"></label><label>Work preference<select name="work"><option>Any arrangement</option><option>Remote</option><option>Hybrid</option><option>On-site</option></select></label><div class="full toolbar"><button class="primary">Save profile</button><button type="button" id="clear-data" class="secondary">Delete local workspace</button></div></form><p id="profile-status" role="status"></p></section>
-<section id="plans-view" class="page-view" hidden><div class="eyebrow">ROOM TO GROW</div><h2>Start free. Dream big.</h2><p>The student workspace is free today. Paid plans are in development; no subscriptions or charges are active.</p><div class="plans"><article class="plan"><span class="badge">AVAILABLE NOW</span><h3>Free</h3><div class="price">$0 <small>/ forever for core tools</small></div><p>A strong starting point.</p><ul><li>Live discovery within shared beta limits</li><li>All search preferences</li><li>Save and compare opportunities</li><li>Manual application tracker</li><li>Profile saved on your device</li></ul><button id="free-start" class="primary">Explore for free ›</button></article><article class="plan"><span class="badge">PLANNED</span><h3>Basic</h3><div class="price">A little more support.</div><p>For a more organized search.</p><ul><li>Higher search allowance</li><li>Accounts and sync across devices</li><li>Saved-search and deadline alerts</li><li>AI eligibility explanations</li><li>Résumé feedback and outreach drafts</li></ul><p class="small">Pricing and limits to be announced.</p></article><article class="plan pro"><span class="badge">PRO VISION · COMING SOON</span><h3>Pro</h3><div class="price">Your application copilot.</div><p>Less busywork. More possibility.</p><ul><li>AI searches based on your profile</li><li>Prepares application materials</li><li>Requests missing information</li><li>Shows every answer for approval</li><li>Submits on supported sites after approval</li></ul><button id="pro-preview" class="secondary">Explore the preparation workspace ›</button><p class="small">AI and submission are not active yet.</p></article></div></section>
-<section id="copilot-view" class="page-view" hidden><div class="eyebrow">PRO APPLICATION COPILOT · PREPARATION PREVIEW</div><h2>Make room for your next chapter.</h2><p>Organize what your future application assistant will need. This preview creates a checklist; it does not run AI or send applications.</p><div class="copilot-grid"><div class="panel"><h3>1. Choose your opportunity</h3><label for="copilot-role">Saved opportunity</label><select id="copilot-role"></select><h3>2. Prepare your materials</h3><p class="small">Mark what you have. Do not upload sensitive documents here.</p><label class="check"><input type="checkbox" id="mat-resume"> Résumé / CV ready</label><label class="check"><input type="checkbox" id="mat-statement"> Statement of interest ready</label><label class="check"><input type="checkbox" id="mat-transcript"> Transcript available if requested</label><button id="prepare-checklist" class="primary">Build my checklist ›</button></div><div class="panel" id="copilot-output"><span class="empty-mark">✧</span><h3>You stay in control.</h3><p>Choose an opportunity to see your preparation checklist. Future submissions will require your review and approval.</p></div></div></section>
-</main><footer><a class="brand" href="/">fieldwork ›</a><span>For the curious. For what’s next.</span><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscriptions">Subscriptions</a></footer><div id="toast" role="status" hidden></div><dialog id="dialog" aria-labelledby="dialog-title"><button class="close" id="dialog-close" aria-label="Close details">×</button><div id="dialog-body"></div></dialog></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Find research positions and internships near home or anywhere. Save, compare and track your applications with Fieldwork."
+    />
+    <title>Fieldwork · Research and internships for students</title>
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/young-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/vendor/supabase-2.119.0.js" defer></script>
+    <script src="/js/main.js" type="module"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href="#discover" aria-label="Fieldwork home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="1" y="1" width="30" height="30" rx="3" />
+          <path d="M1 11h30M1 21h30M11 1v30M21 1v30" class="brand-grid" />
+          <path d="M16 7c-3.3 0-6 2.6-6 5.9 0 4.4 6 11.1 6 11.1s6-6.7 6-11.1C22 9.6 19.3 7 16 7z" class="brand-pin" />
+          <circle cx="16" cy="13" r="2.2" class="brand-dot" />
+        </svg>
+        <span>fieldwork</span>
+      </a>
+      <nav class="tabs" aria-label="Main">
+        <a href="#discover" data-view="discover">Discover</a>
+        <a href="#saved" data-view="saved">Saved <span class="count" id="saved-count">0</span></a>
+        <a href="#applications" data-view="applications">Applications</a>
+        <a href="#plans" data-view="plans">Plans</a>
+      </nav>
+      <div class="account">
+        <a href="#profile" class="profile-link" data-view="profile">Profile</a>
+        <button id="account-button" class="account-button" hidden>Sign in</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Discover -------------------------------------------------------- -->
+      <section id="view-discover" class="view" data-view="discover">
+        <div class="hero">
+          <h1 class="lede">Research and internships, near home or anywhere.</h1>
+          <form id="search-form" class="sentence" autocomplete="off">
+            <span class="word">I’m looking for</span>
+            <button type="button" class="slot" data-picker="type" aria-haspopup="dialog" id="slot-type">
+              research or internships
+            </button>
+            <span class="word">in</span>
+            <span class="slot-field">
+              <label for="query" class="visually-hidden">Field, role or interest</label>
+              <input id="query" name="q" required minlength="2" maxlength="240" placeholder="biomedical engineering" />
+            </span>
+            <button type="button" class="slot" data-picker="place" aria-haspopup="dialog" id="slot-place">
+              anywhere
+            </button>
+            <button type="button" class="slot" data-picker="season" aria-haspopup="dialog" id="slot-season">
+              at any time
+            </button>
+            <button class="go" id="submit">
+              <span>Search</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-5 5 5-5 5" /></svg>
+            </button>
+          </form>
+
+          <div class="quick" role="group" aria-label="Quick preferences">
+            <button type="button" class="chip" data-flag="paid" aria-pressed="false">Paid or funded</button>
+            <button type="button" class="chip" data-flag="remote" aria-pressed="false">Remote OK</button>
+            <button type="button" class="chip" data-flag="noExperience" aria-pressed="false">No experience needed</button>
+            <button type="button" class="chip" data-flag="international" aria-pressed="false">Open to international students</button>
+            <button type="button" class="chip" data-flag="housing" aria-pressed="false">Housing provided</button>
+          </div>
+          <div class="quick-links">
+            <button type="button" class="link-button" id="more-filters">More filters</button>
+            <button type="button" class="link-button" id="use-profile">Fill from my profile</button>
+          </div>
+          <div id="access" class="access" hidden>
+            <label for="access-code">Beta access code</label>
+            <input id="access-code" type="password" autocomplete="off" />
+          </div>
+        </div>
+
+        <div id="setup" class="notice" hidden>
+          Search is unavailable right now. Your saved items and applications still work.
+        </div>
+
+        <section class="results" aria-labelledby="result-title">
+          <div class="results-head">
+            <div>
+              <h2 id="result-title">Start with an idea</h2>
+              <p id="status" class="status" role="status" aria-live="polite">
+                Pick one of these or write your own sentence above.
+              </p>
+            </div>
+            <div class="results-tools" id="results-tools" hidden>
+              <div class="refine" role="group" aria-label="Narrow these results">
+                <button type="button" class="chip small" data-refine="open" aria-pressed="false">Open wording only</button>
+                <button type="button" class="chip small" data-refine="funding" aria-pressed="false">Mentions funding</button>
+                <button type="button" class="chip small" data-refine="official" aria-pressed="false">University or employer sites</button>
+              </div>
+              <label class="sort">Sort
+                <select id="sort">
+                  <option value="relevance">Best match</option>
+                  <option value="source">University or employer first</option>
+                  <option value="title">Title A–Z</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <p id="warnings" class="warnings" role="status"></p>
+
+          <div id="starters" class="starters">
+            <button type="button" data-preset='{"q":"neuroscience","type":"research","city":"Boston","state":"Massachusetts","season":"Summer 2027"}'>
+              research in <em>neuroscience</em> near <em>Boston, MA</em> for <em>summer 2027</em>
+            </button>
+            <button type="button" data-preset='{"q":"software engineering","type":"internship","city":"New York","state":"New York","season":"Summer 2027","paid":true}'>
+              a paid internship in <em>software engineering</em> near <em>New York, NY</em>
+            </button>
+            <button type="button" data-preset='{"q":"climate science","type":"research","state":"California","noExperience":true}'>
+              research in <em>climate science</em> in <em>California</em>, no experience needed
+            </button>
+            <button type="button" data-preset='{"q":"public health","type":"all","remote":true,"international":true}'>
+              anything in <em>public health</em>, remote, open to international students
+            </button>
+          </div>
+
+          <div id="cards" class="cards" aria-live="off"></div>
+          <div id="empty" class="empty" hidden>
+            <h3 id="empty-title"></h3>
+            <p id="empty-text"></p>
+          </div>
+          <details id="search-details" class="search-details" hidden>
+            <summary>What we searched for</summary>
+            <ul id="query-list"></ul>
+          </details>
+        </section>
+      </section>
+
+      <!-- Saved ----------------------------------------------------------- -->
+      <section id="view-saved" class="view page" data-view="saved" hidden>
+        <div class="page-head">
+          <h2>Saved</h2>
+          <p id="saved-sub">Your shortlist. Tick two or three to compare them side by side.</p>
+        </div>
+        <div id="saved-cards" class="cards"></div>
+        <div id="saved-empty" class="empty" hidden>
+          <h3>Nothing saved yet</h3>
+          <p>Use the bookmark on any result to keep it here.</p>
+          <a class="button" href="#discover">Find opportunities</a>
+        </div>
+        <div id="compare-tray" class="compare-tray" hidden>
+          <span id="compare-count">0 selected</span>
+          <button type="button" class="button" id="compare-go" disabled>Compare</button>
+          <button type="button" class="link-button" id="compare-clear">Clear</button>
+        </div>
+      </section>
+
+      <!-- Applications ---------------------------------------------------- -->
+      <section id="view-applications" class="view page" data-view="applications" hidden>
+        <div class="page-head">
+          <h2>Applications</h2>
+          <p>Drag a card to move it to the next stage. You set every status yourself.</p>
+          <div class="page-actions">
+            <button type="button" class="button" id="add-application">Add an application</button>
+            <button type="button" class="button ghost" id="export-data">Export my data</button>
+          </div>
+        </div>
+        <div id="board" class="board"></div>
+      </section>
+
+      <!-- Plans ----------------------------------------------------------- -->
+      <section id="view-plans" class="view page" data-view="plans" hidden>
+        <div class="page-head">
+          <h2>Plans</h2>
+          <p>Everything you use today is free. Paid features are being built and are not for sale yet.</p>
+        </div>
+        <div class="plans">
+          <article class="plan">
+            <h3>Free</h3>
+            <p class="plan-price">$0, for good</p>
+            <ul>
+              <li>Search research and internships, including local internships by city and state</li>
+              <li>Source evidence for every result</li>
+              <li>Save, compare and track applications</li>
+              <li>Sign in to sync across devices</li>
+            </ul>
+            <a class="button" href="#discover">Start searching</a>
+          </article>
+          <article class="plan plan-pro">
+            <h3>Pro <span class="tag">In development</span></h3>
+            <p class="plan-price">Pricing to be announced</p>
+            <ul>
+              <li>Find labs that are hiring before they post, using new research grants</li>
+              <li>One-page briefings on a lab’s recent work</li>
+              <li>Outreach drafts sent from your own email, with follow-up reminders</li>
+              <li>Résumé and statement feedback</li>
+              <li>Deadline alerts</li>
+            </ul>
+            <p class="fine">AI features and automatic submission are not active yet.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Profile --------------------------------------------------------- -->
+      <section id="view-profile" class="view page" data-view="profile" hidden>
+        <div class="page-head">
+          <h2>Profile</h2>
+          <p id="profile-where">Saved on this device. Sign in to keep it in sync everywhere.</p>
+        </div>
+        <form id="profile-form" class="profile-form">
+          <label>Preferred name<input name="name" maxlength="60" /></label>
+          <label>Major or field<input name="major" maxlength="100" placeholder="e.g. Biomedical engineering" /></label>
+          <label>Study level
+            <select name="level">
+              <option value="">Choose one</option>
+              <option>Undergraduate</option>
+              <option>Master’s</option>
+              <option>PhD</option>
+              <option>Recent graduate</option>
+            </select>
+          </label>
+          <label>Available from<input name="available" type="date" /></label>
+          <label>City<input name="city" maxlength="80" placeholder="e.g. Boston" /></label>
+          <label>State<select name="state" data-states></select></label>
+          <label>How far you’d travel
+            <select name="radius">
+              <option value="">Any distance</option>
+              <option value="10">10 miles</option>
+              <option value="25">25 miles</option>
+              <option value="50">50 miles</option>
+              <option value="100">100 miles</option>
+            </select>
+          </label>
+          <label>Work preference
+            <select name="work">
+              <option value="">No preference</option>
+              <option>Remote</option>
+              <option>Hybrid</option>
+              <option>On-site</option>
+            </select>
+          </label>
+          <label class="full">Interests and skills
+            <textarea name="interests" maxlength="400" placeholder="e.g. Optics, cell imaging, Python"></textarea>
+          </label>
+          <div class="full form-actions">
+            <button class="button">Save profile</button>
+            <button type="button" class="button ghost danger" id="clear-data">Delete my workspace</button>
+          </div>
+        </form>
+        <p id="profile-status" class="status" role="status"></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Fieldwork · free beta</span>
+      <a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscriptions">Subscriptions</a>
+    </footer>
+
+    <!-- Shared layers -------------------------------------------------------- -->
+    <div id="picker" class="picker" role="dialog" aria-modal="false" hidden></div>
+    <dialog id="dialog" class="dialog" aria-labelledby="dialog-title">
+      <button class="close" id="dialog-close" aria-label="Close">×</button>
+      <div id="dialog-body"></div>
+    </dialog>
+    <dialog id="drawer" class="drawer" aria-labelledby="drawer-title">
+      <button class="close" id="drawer-close" aria-label="Close">×</button>
+      <h2 id="drawer-title">More filters</h2>
+      <label>Study level
+        <select id="f-level">
+          <option value="">Any level</option>
+          <option>Undergraduate</option>
+          <option>Master’s</option>
+          <option>PhD</option>
+          <option>Recent graduate</option>
+        </select>
+      </label>
+      <label>Length
+        <select id="f-duration">
+          <option value="">Any length</option>
+          <option>4–8 weeks</option>
+          <option>8–12 weeks</option>
+          <option>3–6 months</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="f-social" /> Include posts from Reddit, LinkedIn and other communities</label>
+      <label class="check"><input type="checkbox" id="f-closed" /> Show results that say applications are closed</label>
+      <p class="fine">These preferences shape the search. Results can still miss them, so check each listing.</p>
+      <div class="form-actions">
+        <button type="button" class="button" id="drawer-apply">Done</button>
+        <button type="button" class="link-button" id="drawer-reset">Reset all filters</button>
+      </div>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+  </body>
+</html>

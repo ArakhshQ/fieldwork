@@ -1,6 +1,6 @@
 {
   "name": "fieldwork-live-search",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -10,6 +10,6 @@
     "start": "node --env-file-if-exists=.env server.mjs",
     "dev": "node --env-file-if-exists=.env server.mjs",
     "test": "node --test",
-    "check": "node --check server.mjs && node --check lib/search.mjs && node --check public/app.js && node --check public/workspace.js"
+    "check": "node --check server.mjs && node --check lib/search.mjs && for f in public/js/*.js; do node --check \"$f\" || exit 1; done"
   }
 }
