@@ -8,7 +8,7 @@ on:
     - cron: '17 9 * * *' # 09:17 UTC daily (early morning in the US)
   workflow_dispatch:
   push:
-    branches: [phase2-local-internships]
+    branches: [main]
     paths:
       - 'scripts/collect-internships.mjs'
       - 'data/employers.json'

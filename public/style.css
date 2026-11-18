@@ -1455,6 +1455,9 @@ label.check input {
   .results-head {
     align-items: flex-start;
   }
+  .results {
+    scroll-margin-top: 120px;
+  }
   .compare-tray {
     width: calc(100vw - 28px);
     justify-content: space-between;

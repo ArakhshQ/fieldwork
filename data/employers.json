@@ -417,21 +417,6 @@
    "token": "astranis"
   },
   {
-   "name": "Joby Aviation",
-   "ats": "greenhouse",
-   "token": "jobyaviation"
-  },
-  {
-   "name": "Boom Supersonic",
-   "ats": "greenhouse",
-   "token": "boomsupersonic"
-  },
-  {
-   "name": "Form Energy",
-   "ats": "greenhouse",
-   "token": "formenergy"
-  },
-  {
    "name": "Redwood Materials",
    "ats": "greenhouse",
    "token": "redwoodmaterials"
@@ -442,44 +427,9 @@
    "token": "verkada"
   },
   {
-   "name": "Commonwealth Fusion Systems",
-   "ats": "greenhouse",
-   "token": "cfsenergy"
-  },
-  {
-   "name": "QuantumScape",
-   "ats": "greenhouse",
-   "token": "quantumscape"
-  },
-  {
    "name": "Generate Biomedicines",
    "ats": "greenhouse",
    "token": "generatebiomedicines"
-  },
-  {
-   "name": "Dyno Therapeutics",
-   "ats": "greenhouse",
-   "token": "dynotx"
-  },
-  {
-   "name": "Relay Therapeutics",
-   "ats": "greenhouse",
-   "token": "relaytx"
-  },
-  {
-   "name": "Intellia",
-   "ats": "greenhouse",
-   "token": "intelliatx"
-  },
-  {
-   "name": "Beam Therapeutics",
-   "ats": "greenhouse",
-   "token": "beamtx"
-  },
-  {
-   "name": "Kymera",
-   "ats": "greenhouse",
-   "token": "kymeratx"
   },
   {
    "name": "Cellarity",
@@ -487,34 +437,14 @@
    "token": "cellarity"
   },
   {
-   "name": "Asimov",
-   "ats": "greenhouse",
-   "token": "asimov"
-  },
-  {
    "name": "Twist Bioscience",
    "ats": "greenhouse",
    "token": "twistbioscience"
   },
   {
-   "name": "GRAIL",
-   "ats": "greenhouse",
-   "token": "grailbio"
-  },
-  {
    "name": "Freenome",
    "ats": "greenhouse",
    "token": "freenome"
-  },
-  {
-   "name": "Color",
-   "ats": "greenhouse",
-   "token": "color"
-  },
-  {
-   "name": "Sana Biotechnology",
-   "ats": "greenhouse",
-   "token": "sanabiotechnology"
   },
   {
    "name": "Chan Zuckerberg Initiative",
@@ -542,11 +472,6 @@
    "token": "optiverus"
   },
   {
-   "name": "Five Rings",
-   "ats": "greenhouse",
-   "token": "fiverings"
-  },
-  {
    "name": "Squarepoint",
    "ats": "greenhouse",
    "token": "squarepointcapital"
@@ -567,69 +492,14 @@
    "token": "virtu"
   },
   {
-   "name": "Ro",
-   "ats": "greenhouse",
-   "token": "ro"
-  },
-  {
-   "name": "Headway",
-   "ats": "greenhouse",
-   "token": "headway"
-  },
-  {
-   "name": "Cityblock Health",
-   "ats": "greenhouse",
-   "token": "cityblockhealth"
-  },
-  {
-   "name": "Applied Intuition",
-   "ats": "greenhouse",
-   "token": "appliedintuition"
-  },
-  {
-   "name": "Aurora",
-   "ats": "greenhouse",
-   "token": "aurorainnovation"
-  },
-  {
    "name": "Yext",
    "ats": "greenhouse",
    "token": "yext"
   },
   {
-   "name": "Hinge Health",
-   "ats": "greenhouse",
-   "token": "hingehealth"
-  },
-  {
-   "name": "Tala",
-   "ats": "greenhouse",
-   "token": "tala"
-  },
-  {
    "name": "Zoox",
    "ats": "lever",
    "token": "zoox"
-  },
-  {
-   "name": "Skydio",
-   "ats": "lever",
-   "token": "skydio"
-  },
-  {
-   "name": "Lucid Motors",
-   "ats": "lever",
-   "token": "lucidmotors"
-  },
-  {
-   "name": "Netflix",
-   "ats": "lever",
-   "token": "netflix"
-  },
-  {
-   "name": "Figure",
-   "ats": "ashby",
-   "token": "figureai"
   },
   {
    "name": "Physical Intelligence",
