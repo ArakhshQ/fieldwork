@@ -44,6 +44,19 @@ export function timestamp(value) {
     : d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
 }
 
+/** "12 minutes ago", "3 hours ago", "2 days ago" for an ISO time. */
+export function ago(value) {
+  const t = new Date(value).valueOf();
+  if (Number.isNaN(t)) return 'recently';
+  const mins = Math.max(0, Math.round((Date.now() - t) / 60000));
+  if (mins < 2) return 'just now';
+  if (mins < 60) return `${mins} minutes ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 36) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  const days = Math.round(hours / 24);
+  return `${days} days ago`;
+}
+
 /** Whole days from today until an ISO date (yyyy-mm-dd), or null. */
 export function daysUntil(isoDate) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate || '')) return null;

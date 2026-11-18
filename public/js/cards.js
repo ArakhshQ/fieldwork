@@ -4,6 +4,8 @@ import { isSaved, toggleSave, track } from './store.js';
 
 const SIGNALS = {
   live_posting: ['open', 'Live job posting'],
+  active_award: ['open', 'Currently funded'],
+  new_funding: ['open', 'New grant'],
   open_signal: ['open', 'Open wording found'],
   closed_signal: ['closed', 'Says applications are closed'],
 };
@@ -56,7 +58,7 @@ export function trackButton(r) {
  * @param opts.select optional { checked, onChange } to show a compare checkbox
  */
 export function opportunityCard(r, opts = {}) {
-  const kind = /intern/i.test(r.kind || '') ? 'internship' : /research/i.test(r.kind || '') ? 'research' : 'other';
+  const kind = r.group === 'labs' ? 'lab' : /intern/i.test(r.kind || '') ? 'internship' : /research/i.test(r.kind || '') ? 'research' : 'other';
   const card = el('article', null, `card kind-${kind}`);
 
   const head = el('div', null, 'card-head');
@@ -102,6 +104,16 @@ export function opportunityCard(r, opts = {}) {
     el('p', 'Short excerpts from the page, not verified facts. Pages can describe past cycles.', 'fine'),
   );
   card.append(details);
+
+  // Award records link to the grant page; help students find the program or lab itself.
+  if (r.group === 'programs' && /(^|\.)(nsf|nih)\.gov$/.test(new URL(r.url, location.href).hostname)) {
+    const q = `${r.host} ${r.title} summer research program`;
+    card.append(externalLink('Find the program’s website', 'https://www.google.com/search?q=' + encodeURIComponent(q), 'card-link'));
+  }
+  if (r.group === 'labs' && r.pi) {
+    const q = `${r.pi} lab ${r.title.split(', ').slice(1).join(', ')}`;
+    card.append(externalLink('Find the lab’s website', 'https://www.google.com/search?q=' + encodeURIComponent(q), 'card-link'));
+  }
 
   const foot = el('div', null, 'card-foot');
   foot.append(

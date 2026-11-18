@@ -6,3 +6,7 @@ node_modules/
 .DS_Store
 coverage/
 .openai/
+
+# Large generated research catalog lives on the data branch.
+data/research.json
+data/research-report.json

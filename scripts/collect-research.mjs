@@ -210,6 +210,9 @@ const contactPi = (p) => {
 export function nihProgram(p) {
   const text = `${p.project_title || ''} ${p.abstract_text || ''}`;
   if (!/undergrad/i.test(text) || !/summer|research experience|research training|internship/i.test(text)) return null;
+  // Programs for high-school students or teachers mention undergraduates in passing.
+  if (/high school|adolescen|k-12|teachers?\b|middle school|youth/i.test(p.project_title || '') && !/undergrad|college/i.test(p.project_title || ''))
+    return null;
   const org = p.organization || {};
   return {
     id: `nih-r25:${p.core_project_num || p.appl_id}`,
@@ -239,6 +242,8 @@ export function nihLab(p) {
   const org = p.organization || {};
   const pi = contactPi(p);
   if (!pi || !org.org_name) return null;
+  // Labs that take students: universities, medical schools, hospitals and research institutes.
+  if (!/universit|college|institute|school|hospital|clinic|medical center|health system|laborator|research foundation/i.test(org.org_name)) return null;
   const ic = p.agency_ic_admin?.abbreviation;
   return {
     id: `nih:${p.core_project_num || p.appl_id}`,
@@ -282,19 +287,27 @@ async function main() {
       nsfPages({ dateStart: usDate(since), dateEnd: usDate(today) }, { label: 'new awards', maxPages: 400 }).then((rows) =>
         rows.map(nsfLab).filter(Boolean),
       ),
-    nihLabs: () =>
-      nihPages(
-        {
-          activity_codes: LAB_CODES,
-          award_notice_date: { from_date: isoDay(since), to_date: isoDay(today) },
-          exclude_subprojects: true,
-        },
-        { label: 'new grants', max: 10000 },
-      ).then((rows) => {
-        const best = new Map();
-        for (const r of rows.map(nihLab).filter(Boolean)) if (!best.has(r.id)) best.set(r.id, r);
-        return [...best.values()];
-      }),
+    nihLabs: async () => {
+      // 30-day windows keep each query under RePORTER's 10,000-row paging limit.
+      const rows = [];
+      for (let end = today; end > since; ) {
+        const start = new Date(Math.max(since.getTime(), end.getTime() - 30 * 86400000));
+        rows.push(
+          ...(await nihPages(
+            {
+              activity_codes: LAB_CODES,
+              award_notice_date: { from_date: isoDay(start), to_date: isoDay(end) },
+              exclude_subprojects: true,
+            },
+            { label: `new grants ${isoDay(start)}..${isoDay(end)}`, max: 10000 },
+          )),
+        );
+        end = new Date(start.getTime() - 86400000);
+      }
+      const best = new Map();
+      for (const r of rows.map(nihLab).filter(Boolean)) if (!best.has(r.id)) best.set(r.id, r);
+      return [...best.values()];
+    },
   };
 
   let previous = null;
