@@ -7,7 +7,7 @@ on:
     - cron: '41 7 * * *'
   workflow_dispatch:
   push:
-    branches: [main, phase3-live-research]
+    branches: [main]
     paths:
       - 'scripts/collect-research.mjs'
       - '.github/workflows/collect-research.yml'

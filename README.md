@@ -42,6 +42,21 @@ Students can use everything without an account. Signing in by email link syncs t
 
 The browser talks to Supabase directly with the publishable key; the server never needs the secret key for this phase. The CSP's `connect-src` is widened only to the configured Supabase origin, and only when it is a valid https URL. Supabase's built-in email sender is heavily rate-limited; connect a custom SMTP provider before launch.
 
+## Live data (no redeploys)
+
+Three free catalogs answer searches instantly. GitHub Actions on `main` rebuild them on a schedule and publish them to the `data` branch:
+
+| File on `data` | Built by | Refresh | Source |
+|---|---|---|---|
+| `internships.json` | `scripts/collect-internships.mjs` | every 4 hours | Public Greenhouse, Lever and Ashby job boards for `data/employers.json` |
+| `research.json` | `scripts/collect-research.mjs` | daily | NSF Award Search API (active REU sites, research grants from the last 120 days) and NIH RePORTER (undergraduate R25 programs, new research grants) |
+
+In production the server downloads each file from `https://raw.githubusercontent.com/ArakhshQ/fieldwork/data/` every 20 minutes (`lib/datasets.mjs`). A failed or older download never replaces the copy in memory. Set `DATA_URL` to use another https location, or to an empty string to turn remote refresh off. Locally and in tests remote refresh is off unless `DATA_URL` is set.
+
+Searches: `GET /api/internships` and `GET /api/research` (both take `q`, `city`, `state`, `radius`, `remote`, `season`). Neither calls a paid provider. The paid web search (`POST /api/search`) runs alongside for research and on request for internships.
+
+Note: GitHub pauses scheduled workflows in public repositories after 60 days without repository activity. If the data stops updating, re-enable the workflows from the Actions tab.
+
 ## Search flow
 
 1. Validate a short query and preferences for type, geography, remote work, funding, and optional public social discovery.

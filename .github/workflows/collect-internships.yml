@@ -8,7 +8,7 @@ on:
     - cron: '23 */4 * * *'
   workflow_dispatch:
   push:
-    branches: [main, phase3-live-research]
+    branches: [main]
     paths:
       - 'scripts/collect-internships.mjs'
       - 'data/employers.json'

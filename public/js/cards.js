@@ -86,23 +86,42 @@ export function opportunityCard(r, opts = {}) {
   signal.append(el('mark', signalText));
   card.append(signal);
 
-  const evidence = [
-    ['Availability', r.evidence],
-    ['Deadline', r.deadlineEvidence],
-    ['Funding', r.fundingEvidence],
-    ['Eligibility', r.eligibilityEvidence],
-  ];
-  const found = evidence.filter(([, v]) => v).length;
+  // Each source gets labels that say what the details really are.
+  const layouts = {
+    labs: {
+      summary: 'Show details',
+      rows: [['Grant', r.evidence], ['Funding', r.fundingEvidence], ['How to get in', r.eligibilityEvidence]],
+      note: 'From NIH and NSF grant records. This is not a job posting.',
+    },
+    programs: {
+      summary: 'Show details',
+      rows: [['Funding period', r.evidence], ['Deadline', r.deadlineEvidence], ['Stipend', r.fundingEvidence], ['Who can apply', r.eligibilityEvidence]],
+      note: 'From NSF and NIH award records. Check the program’s site for this year’s dates.',
+    },
+    listings: {
+      summary: 'Show details',
+      rows: [['Status', r.evidence]],
+      note: 'From the employer’s own job board. Open the posting for pay, dates and requirements.',
+    },
+  };
+  const layout =
+    layouts[r.group] ||
+    (r.status === 'live_posting'
+      ? layouts.listings
+      : {
+          summary: 'Show what the page says',
+          rows: [['Availability', r.evidence], ['Deadline', r.deadlineEvidence], ['Funding', r.fundingEvidence], ['Eligibility', r.eligibilityEvidence]],
+          note: 'Short excerpts from the page, not verified facts. Pages can describe past cycles.',
+        });
+  const rows = layout.rows.filter(([, v], i) => v || !r.group || i === 0);
+  const found = rows.filter(([, v]) => v).length;
   const details = el('details', null, 'evidence');
-  details.append(el('summary', found ? `Show what the page says (${found})` : 'Show what the page says'));
+  details.append(el('summary', found ? `${layout.summary} (${found})` : layout.summary));
   const dl = el('dl');
-  for (const [label, value] of evidence) {
+  for (const [label, value] of rows) {
     dl.append(el('dt', label), el('dd', value || 'Not found on the page. Check the listing.', value ? '' : 'missing'));
   }
-  details.append(
-    dl,
-    el('p', 'Short excerpts from the page, not verified facts. Pages can describe past cycles.', 'fine'),
-  );
+  details.append(dl, el('p', layout.note, 'fine'));
   card.append(details);
 
   // Award records link to the grant page; help students find the program or lab itself.
