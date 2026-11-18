@@ -80,3 +80,9 @@ The daily, concurrency and request-rate circuit breakers are **per server instan
 - Tavily Extract: https://docs.tavily.com/documentation/api-reference/endpoint/extract
 - Render Node deployment: https://render.com/docs/deploy-node-express-app
 - Render Blueprint: https://render.com/docs/blueprint-spec
+
+## Student workspace v2
+
+Free: expanded discovery preferences, source-evidence result filters, sorting, local profile, saved-opportunity comparison, manual application tracking, export and deletion. Workspace information stays in the browser. No authentication, billing, cloud sync or AI submissions are enabled.
+
+Basic and Pro are explicitly planned. Pro includes a working manual preparation checklist preview, not a running agent. Before commercial launch: establish the operator identity and private contact channel; review policy pages for the actual jurisdictions and data flows; implement secure accounts, document storage, per-user entitlements, provider cost limits and durable job processing. Choose and connect an AI provider. Support application destinations individually, request missing materials, and require review of the exact application before submission. Record a real destination receipt before reporting a submission as successful. Never infer sensitive demographic answers or fabricate qualifications.

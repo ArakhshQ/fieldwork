@@ -28,13 +28,13 @@ export function createApp({env=process.env,search=createSearchService({apiKey:en
       if(clock()>bucket.until){bucket.count=0;bucket.until=clock()+60000;}
       if(bucket.count>=10||daily>=maxDaily)return send(429,{error:'Search limit reached. Please try again later.',code:'rate_limited'});
       if(active>=maxConcurrent)return send(429,{error:'A few searches are running. Please try again shortly.',code:'busy'});
-      if(!env.TAVILY_API_KEY)return send(503,{error:'Live search needs a search-provider key. Add TAVILY_API_KEY in Render’s Environment settings.',code:'setup_required'});
+      if(!env.TAVILY_API_KEY)return send(503,{error:'Search is temporarily unavailable. Please try again later.',code:'setup_required'});
       bucket.count++;rates.set(ip,bucket);daily++;active++;
       if(rates.size>10000)for(const[k,v]of rates)if(v.until<clock())rates.delete(k);
       try{const data=await search(input);return send(200,data);}catch(e){return send(e.status||500,{error:e instanceof SearchError?e.message:'Search could not complete. Please retry.',code:e.code||'search_failed'});}finally{active--;}
     }
     if(req.method!=='GET'&&req.method!=='HEAD')return send(405,{error:'Method not allowed.'});
-    const files={'/':'index.html','/index.html':'index.html','/style.css':'style.css','/app.js':'app.js','/favicon.svg':'favicon.svg'};
+    const files={'/':'index.html','/index.html':'index.html','/style.css':'style.css','/app.js':'app.js','/favicon.svg':'favicon.svg','/workspace.js':'workspace.js','/terms':'terms.html','/privacy':'privacy.html','/subscriptions':'subscriptions.html'};
     const file=files[url.pathname];if(!file)return send(404,{error:'Not found.'});
     try{const bytes=await readFile(path.join(root,file));const mime=file.endsWith('.css')?'text/css':file.endsWith('.js')?'text/javascript':file.endsWith('.svg')?'image/svg+xml':'text/html';res.writeHead(200,{...headers,'Content-Type':mime+'; charset=utf-8','Cache-Control':'no-cache'});res.end(req.method==='HEAD'?undefined:bytes);}catch{return send(500,{error:'Page could not be loaded.'});}
   });
