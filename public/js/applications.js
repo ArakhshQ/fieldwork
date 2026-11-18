@@ -1,6 +1,7 @@
 // Applications board: drag cards between stages (or use the stage menu).
 import { $, el, externalLink, toast, daysUntil, openDialog, closeDialog, safeLink } from './ui.js';
 import { getState, STAGES, updateApplication, removeApplication, track, exportData } from './store.js';
+import { draftFollowUp, hasOutreach } from './pro.js';
 
 let dragId = null;
 
@@ -101,6 +102,12 @@ function card(a) {
     if (confirm(`Remove “${a.title}” from Applications?`)) removeApplication(a.id);
   });
   actions.append(prep, remove);
+  if (hasOutreach(a.id) && ['Applied', 'Preparing'].includes(a.status)) {
+    const follow = el('button', 'Draft a follow-up', 'button small pro-action');
+    follow.type = 'button';
+    follow.addEventListener('click', () => draftFollowUp(a));
+    more.append(follow);
+  }
   more.append(stageLabel, dueLabel, notesLabel, actions);
   node.append(more);
   return node;

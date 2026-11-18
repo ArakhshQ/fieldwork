@@ -57,6 +57,18 @@ Searches: `GET /api/internships` and `GET /api/research` (both take `q`, `city`,
 
 Note: GitHub pauses scheduled workflows in public repositories after 60 days without repository activity. If the data stops updating, re-enable the workflows from the Actions tab.
 
+## Pro: lab briefings and professor emails
+
+From any "Labs with new funding" card, Pro students get a one-page briefing and a personal email draft.
+
+1. `lib/outreach.mjs` gathers public facts: the grant abstract (NIH RePORTER or NSF), recent papers (OpenAlex), and the lab's own pages (one Tavily search). An email address is only shown if it appears verbatim on an academic page and matches the professor's name; the model never supplies one.
+2. Claude Sonnet 5.5 (`lib/ai.mjs`) writes the briefing and email as JSON. Fetched text is fenced as data, outputs are length-clamped and rendered as text.
+3. Drafts open in the student's own Gmail or Outlook compose window. Fieldwork never sends email. "I sent it" tracks the lab in Applications with a 10-day follow-up countdown, and "Draft a follow-up" writes the follow-up.
+
+Access (`lib/pro.mjs`): Pro preview codes (`PRO_PREVIEW_CODES`) work now; once accounts are on, an active Paddle subscription unlocks Pro. Monthly limits are 40 briefings and 80 emails (15 and 30 for preview codes), enforced in the database by `consume_ai_quota()` for subscribers. `AI_DAILY_BUDGET_USD` (default 5) pauses all AI calls for the rest of the UTC day once reached. Each call's cost is logged to the server log.
+
+Billing (`lib/paddle.mjs`, `/upgrade`): Paddle.js loads only on the checkout page, which has its own CSP. `POST /api/paddle/webhook` verifies the `Paddle-Signature` HMAC on the raw body and upserts the subscription into Supabase with the server-only `SUPABASE_SECRET_KEY`. Run `supabase/002_billing.sql` after `001_accounts.sql`.
+
 ## Search flow
 
 1. Validate a short query and preferences for type, geography, remote work, funding, and optional public social discovery.

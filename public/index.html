@@ -194,16 +194,20 @@
             <a class="button" href="#discover">Start searching</a>
           </article>
           <article class="plan plan-pro">
-            <h3>Pro <span class="tag">In development</span></h3>
-            <p class="plan-price">Pricing to be announced</p>
+            <h3>Pro <span class="tag" id="pro-tag">Coming soon</span></h3>
+            <p class="plan-price">$19 a month, or $59 for a 4-month season</p>
             <ul>
-              <li>Find labs that are hiring before they post, using new research grants</li>
-              <li>One-page briefings on a lab’s recent work</li>
-              <li>Outreach drafts sent from your own email, with follow-up reminders</li>
-              <li>Résumé and statement feedback</li>
-              <li>Deadline alerts</li>
+              <li>A one-page briefing on any lab: what they study, what students do there, how you fit</li>
+              <li>A personal email to the professor, written from your profile and résumé</li>
+              <li>The professor’s email when it’s listed on a public page</li>
+              <li>Follow-up drafts and reminders when they don’t reply</li>
+              <li>Up to 40 briefings and 80 emails a month</li>
             </ul>
-            <p class="fine">AI features and automatic submission are not active yet.</p>
+            <p class="fine" id="pro-note">Emails open in your own Gmail or Outlook, and you press Send.</p>
+            <div class="form-actions">
+              <a class="button" href="/upgrade" id="upgrade-link" hidden>Get Pro</a>
+              <button type="button" class="link-button" id="preview-code">I have a Pro preview code</button>
+            </div>
           </article>
         </div>
       </section>
@@ -216,6 +220,7 @@
         </div>
         <form id="profile-form" class="profile-form">
           <label>Preferred name<input name="name" maxlength="60" /></label>
+          <label>School<input name="school" maxlength="100" placeholder="e.g. Dartmouth College" /></label>
           <label>Major or field<input name="major" maxlength="100" placeholder="e.g. Biomedical engineering" /></label>
           <label>Study level
             <select name="level">
@@ -248,6 +253,10 @@
           </label>
           <label class="full">Interests and skills
             <textarea name="interests" maxlength="400" placeholder="e.g. Optics, cell imaging, Python"></textarea>
+          </label>
+          <label class="full">Résumé (paste the text)
+            <textarea id="resume" maxlength="6000" rows="8" placeholder="Paste your résumé here. Pro uses it to write emails that sound like you."></textarea>
+            <span class="fine">Stays on this device. It’s only sent when you use a Pro writing tool, and never stored on our servers.</span>
           </label>
           <div class="full form-actions">
             <button class="button">Save profile</button>

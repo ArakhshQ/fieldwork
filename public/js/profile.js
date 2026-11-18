@@ -1,6 +1,6 @@
 // Profile form and account sign-in.
 import { $, el, toast, openDialog, closeDialog, fillStateSelect } from './ui.js';
-import { getState, saveProfile, deleteWorkspace, sendSignInLink, signOut } from './store.js';
+import { getState, saveProfile, deleteWorkspace, sendSignInLink, signOut, getResume, setResume } from './store.js';
 
 export function renderProfile() {
   const { profile, user, accounts } = getState();
@@ -9,6 +9,7 @@ export function renderProfile() {
     if (!field.name || document.activeElement === field) continue;
     field.value = profile[field.name] || '';
   }
+  if (document.activeElement !== $('resume')) $('resume').value = getResume();
   $('profile-where').textContent = user
     ? `Synced to ${user.email}.`
     : accounts
@@ -89,6 +90,8 @@ export function initProfile() {
   fillStateSelect($('profile-form').querySelector('[data-states]'), 'Choose a state');
   $('profile-form').addEventListener('submit', (e) => {
     e.preventDefault();
+    // Save the résumé first: saving the profile re-renders the form.
+    setResume($('resume').value);
     saveProfile(Object.fromEntries(new FormData(e.target)));
     $('profile-status').textContent = 'Profile saved.';
     toast('Profile saved.');

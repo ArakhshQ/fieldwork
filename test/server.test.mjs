@@ -74,7 +74,7 @@ test('app, assets and policy routes are served with security headers', async (t)
   assert.match(font.headers.get('cache-control'), /immutable/);
   const html = await fetch(base + '/').then((r) => r.text());
   assert(!html.includes('TAVILY_API_KEY'));
-  assert(html.includes('AI features and automatic submission are not active yet.'));
+  assert(html.includes('Emails open in your own Gmail or Outlook, and you press Send.'));
 });
 test('path traversal, dotfiles and source files are never served', async (t) => {
   const base = await serve(t, { env: {} });
