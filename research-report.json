@@ -1,12 +1,12 @@
 {
- "generatedAt": "2026-11-18T15:53:32.710Z",
+ "generatedAt": "2026-11-18T16:01:37.319Z",
  "windowDays": 120,
- "programCount": 961,
- "labCount": 6250,
+ "programCount": 951,
+ "labCount": 6215,
  "sources": {
   "nsfPrograms": {
    "ok": true,
-   "count": 670
+   "count": 660
   },
   "nihPrograms": {
    "ok": true,
@@ -14,11 +14,11 @@
   },
   "nsfLabs": {
    "ok": true,
-   "count": 2658
+   "count": 2649
   },
   "nihLabs": {
    "ok": true,
-   "count": 4205
+   "count": 4143
   }
  }
 }
