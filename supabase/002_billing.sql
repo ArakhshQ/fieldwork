@@ -67,7 +67,7 @@ begin
     return query select false, 0;
     return;
   end if;
-  cap := case p_action when 'briefing' then 40 when 'email' then 80 else 0 end;
+  cap := case p_action when 'briefing' then 30 when 'email' then 60 else 0 end;
   insert into public.ai_usage (user_id, month, action, count)
     values (uid, m, p_action, 0)
     on conflict (user_id, month, action) do nothing;

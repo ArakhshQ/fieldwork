@@ -284,7 +284,8 @@ test('Pro endpoints: off without a key, 402 without Pro, work with a preview cod
   assert.equal(data.briefing.summary, 'A lab.');
   assert.deepEqual(data.emails.map((e) => e.email), []);
   assert.equal(data.remaining, LIMITS.preview.briefing - 1);
-  assert.equal(anthropicCalls[0].model, 'claude-sonnet-5-5');
+  assert.equal(anthropicCalls[0].model, 'claude-opus-5-5');
+  assert.deepEqual(anthropicCalls[0].output_config, { effort: 'medium' });
   assert(anthropicCalls[0].messages[0].content.includes('x'.repeat(6000)));
   assert(!anthropicCalls[0].messages[0].content.includes('x'.repeat(6001)), 'résumé is capped');
 
@@ -296,7 +297,10 @@ test('Pro endpoints: off without a key, 402 without Pro, work with a preview cod
   assert.equal(cross.status, 403);
 
   const status = await fetch(base + '/api/pro/status', { headers }).then((r) => r.json());
-  assert.deepEqual(status, { aiReady: true, plan: 'preview', remaining: { briefing: LIMITS.preview.briefing - 1, email: LIMITS.preview.email - 1 } });
+  assert.equal(status.plan, 'preview');
+  assert.equal(status.remaining.briefing, LIMITS.preview.briefing - 1);
+  assert.equal(status.remaining.email, LIMITS.preview.email - 1);
+  assert.equal(status.remaining.review, LIMITS.preview.review);
 });
 
 test('Paddle webhook rejects bad signatures and saves good ones', async (t) => {

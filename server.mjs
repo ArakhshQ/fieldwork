@@ -7,9 +7,9 @@ import { createSearchService, SearchError } from './lib/search.mjs';
 import { createCatalog } from './lib/internships.mjs';
 import { createResearchCatalog } from './lib/research.mjs';
 import { dataUrlFor } from './lib/datasets.mjs';
-import { createAi, AiError } from './lib/ai.mjs';
+import { createAi } from './lib/ai.mjs';
 import { createPro } from './lib/pro.mjs';
-import { gatherLab, writeBriefing, writeEmail } from './lib/outreach.mjs';
+import { handlePro } from './lib/pro-routes.mjs';
 import { paddleConfig, verifyPaddleSignature, subscriptionRow, saveSubscription } from './lib/paddle.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
@@ -139,21 +139,7 @@ export function createApp({
     }
     return raw;
   }
-  const sameOrigin = (req) => {
-    const origin = req.headers.origin;
-    if (!origin) return true;
-    try {
-      return new URL(origin).host === req.headers.host;
-    } catch {
-      return false;
-    }
-  };
-  const proError = {
-    not_pro: [402, 'This is a Pro feature.', 'pro_required'],
-    limit: [429, 'You’ve used this month’s Pro allowance for this. It resets on the 1st.', 'pro_limit'],
-    budget: [503, 'Pro features are paused for today. Try again tomorrow.', 'pro_paused'],
-    unavailable: [503, 'Couldn’t check your Pro plan. Try again.', 'pro_unavailable'],
-  };
+
   const supabaseUrl = supabaseOrigin(env.SUPABASE_URL);
   const supabaseKey = env.SUPABASE_PUBLISHABLE_KEY || env.SUPABASE_ANON_KEY || '';
 
@@ -234,65 +220,9 @@ export function createApp({
       });
     }
 
-    if (req.method === 'POST' && (url.pathname === '/api/pro/briefing' || url.pathname === '/api/pro/email')) {
-      if (!sameOrigin(req)) return send(403, { error: 'Cross-origin requests are not allowed.' });
-      if (!String(req.headers['content-type'] || '').startsWith('application/json'))
-        return send(415, { error: 'Send JSON.' });
-      if (!ai.enabled) return send(503, { error: 'Pro features aren’t switched on yet.', code: 'ai_not_configured' });
-      let input;
-      try {
-        input = JSON.parse(await readBody(req, 24 * 1024));
-      } catch (e) {
-        return send(e.status || 400, { error: e.status ? e.message : 'Invalid JSON.' });
-      }
-      const who = await pro.identify(req);
-      if (!who || who.plan === 'free') return send(402, { error: proError.not_pro[1], code: 'pro_required' });
-      const lab = await research.findLab(String(input.labId || ''));
-      if (!lab) return send(404, { error: 'That lab isn’t in our list anymore. Search again.' });
-      const action = url.pathname.endsWith('briefing') ? 'briefing' : 'email';
-      const quota = await pro.consume(who, action);
-      if (!quota.ok) {
-        const [status, error, code] = proError[quota.reason] || proError.unavailable;
-        return send(status, { error, code });
-      }
-      const profile = input.profile && typeof input.profile === 'object' ? input.profile : {};
-      const resume = typeof input.resume === 'string' ? input.resume.slice(0, 6000) : '';
-      try {
-        if (action === 'briefing') {
-          let cached = gatherCache.get(lab.id);
-          if (!cached || clock() - cached.at > 86400000) {
-            cached = {
-              at: clock(),
-              value: await gatherLab(lab, { fetchImpl, tavilyKey: env.TAVILY_API_KEY, mailto: env.CONTACT_EMAIL }),
-            };
-            gatherCache.set(lab.id, cached);
-            if (gatherCache.size > 300) gatherCache.delete(gatherCache.keys().next().value);
-          }
-          const g = cached.value;
-          const { briefing, cost } = await writeBriefing(ai, lab, g, profile, resume);
-          pro.record(cost);
-          console.log(`AI briefing ${lab.id} $${cost.toFixed(4)} (${who.kind})`);
-          return send(200, {
-            briefing,
-            emails: g.emails,
-            labUrl: g.labUrl,
-            papers: g.papers.map(({ title, year, venue, url: link }) => ({ title, year, venue, url: link })),
-            remaining: quota.remaining,
-          });
-        }
-        const briefing = input.briefing && typeof input.briefing === 'object' ? input.briefing : {};
-        const { email, cost } = await writeEmail(ai, lab, briefing, profile, resume, {
-          kind: input.kind === 'followup' ? 'followup' : 'first',
-          previous: typeof input.previous === 'string' ? input.previous : '',
-        });
-        pro.record(cost);
-        console.log(`AI email ${lab.id} $${cost.toFixed(4)} (${who.kind})`);
-        return send(200, { email, remaining: quota.remaining });
-      } catch (e) {
-        if (e instanceof AiError) return send(e.status, { error: e.message, code: e.code });
-        console.error('Pro request failed:', e);
-        return send(500, { error: 'Something went wrong. Try again.' });
-      }
+    if (url.pathname.startsWith('/api/pro/') && req.method === 'POST') {
+      const handled = await handlePro(req, res, url, { send, ai, pro, research, env, fetchImpl, clock, gatherCache, headers });
+      if (handled) return;
     }
 
     if (req.method === 'GET' && url.pathname === '/api/config')

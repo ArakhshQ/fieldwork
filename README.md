@@ -57,17 +57,25 @@ Searches: `GET /api/internships` and `GET /api/research` (both take `q`, `city`,
 
 Note: GitHub pauses scheduled workflows in public repositories after 60 days without repository activity. If the data stops updating, re-enable the workflows from the Actions tab.
 
-## Pro: lab briefings and professor emails
+## Pro: AI Studio
 
-From any "Labs with new funding" card, Pro students get a one-page briefing and a personal email draft.
+Pro students get a team of AI tools (`lib/tools.mjs`, routes in `lib/pro-routes.mjs`). All of them use the student's profile and résumé, fence fetched or pasted text as data, and clamp every output.
 
-1. `lib/outreach.mjs` gathers public facts: the grant abstract (NIH RePORTER or NSF), recent papers (OpenAlex), and the lab's own pages (one Tavily search). An email address is only shown if it appears verbatim on an academic page and matches the professor's name; the model never supplies one.
-2. Claude Sonnet 5.5 (`lib/ai.mjs`) writes the briefing and email as JSON. Fetched text is fenced as data, outputs are length-clamped and rendered as text.
-3. Drafts open in the student's own Gmail or Outlook compose window. Fieldwork never sends email. "I sent it" tracks the lab in Applications with a 10-day follow-up countdown, and "Draft a follow-up" writes the follow-up.
+| Tool | Route | Model |
+| --- | --- | --- |
+| Lab briefing + professor email | `/api/pro/briefing`, `/api/pro/email` | Claude Opus 5.5 (effort medium) |
+| Résumé / essay review (score, line fixes, tailoring or a revised essay) | `/api/pro/review` | Claude Opus 5.5 |
+| Résumé import (PDF read by Claude; .docx unzipped on the server, never stored) | `/api/pro/resume-import` | Claude Haiku 5.5 for PDFs |
+| Application builder (eligibility, deadline, checklist, drafted answers, plan) | `/api/pro/application` | Claude Opus 5.5 |
+| Interview practice (5 questions, feedback per answer) | `/api/pro/interview/start`, `/answer` | Claude Sonnet 5.5 |
+| Recommendation-letter kit (request email, brag sheet, timeline) | `/api/pro/letter` | Claude Sonnet 5.5 |
+| Coach chat, streamed over SSE | `/api/pro/coach` | Claude Sonnet 5.5 |
 
-Access (`lib/pro.mjs`): Pro preview codes (`PRO_PREVIEW_CODES`) work now; once accounts are on, an active Paddle subscription unlocks Pro. Monthly limits are 40 briefings and 80 emails (15 and 30 for preview codes), enforced in the database by `consume_ai_quota()` for subscribers. `AI_DAILY_BUDGET_USD` (default 5) pauses all AI calls for the rest of the UTC day once reached. Each call's cost is logged to the server log.
+The application builder only shows a deadline when its quote appears word for word on the page, and drops quotes it can't find. Lab emails are only shown when the address appears verbatim on an academic page. Fieldwork never sends email; drafts open in the student's own Gmail or Outlook.
 
-Billing (`lib/paddle.mjs`, `/upgrade`): Paddle.js loads only on the checkout page, which has its own CSP. `POST /api/paddle/webhook` verifies the `Paddle-Signature` HMAC on the raw body and upserts the subscription into Supabase with the server-only `SUPABASE_SECRET_KEY`. Run `supabase/002_billing.sql` after `001_accounts.sql`.
+Access (`lib/pro.mjs`): Pro preview codes (`PRO_PREVIEW_CODES`) work now; once accounts are on, an active Paddle subscription unlocks Pro. Monthly limits for Pro: 30 briefings, 60 emails, 15 reviews, 15 applications, 10 interviews, 10 letter kits, 10 imports and 150 chat messages (about half for preview codes), enforced in the database by `consume_ai_quota()` for subscribers. Inputs are validated before any allowance is used. `AI_DAILY_BUDGET_USD` (default 10) pauses all AI calls for the rest of the UTC day once reached. Each call's cost is logged to the server log.
+
+Billing (`lib/paddle.mjs`, `/upgrade`): Paddle.js loads only on the checkout page, which has its own CSP. `POST /api/paddle/webhook` verifies the `Paddle-Signature` HMAC on the raw body and upserts the subscription into Supabase with the server-only `SUPABASE_SECRET_KEY`. Run `supabase/001_accounts.sql`, `002_billing.sql` and `003_tools.sql` in order.
 
 ## Search flow
 

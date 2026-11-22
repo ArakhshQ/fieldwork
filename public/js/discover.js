@@ -487,6 +487,14 @@ function applyPreset(p) {
   renderSentence();
 }
 
+/** Used by shortcut tiles: open Discover set to research or internships. */
+export function presetType(type) {
+  if (!TYPES.some(([v]) => v === type)) return;
+  prefs.type = type;
+  renderSentence();
+  setTimeout(() => $('query')?.focus({ preventScroll: true }), 80);
+}
+
 export function fillFromProfile() {
   const p = getState().profile;
   if (!p.major && !p.interests) {
