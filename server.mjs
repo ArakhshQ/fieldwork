@@ -77,7 +77,7 @@ export function securityHeaders(env) {
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'X-Frame-Options': 'DENY',
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    'Permissions-Policy': 'camera=(), microphone=(self), geolocation=()',
     'Content-Security-Policy': [
       "default-src 'self'",
       "script-src 'self'",
