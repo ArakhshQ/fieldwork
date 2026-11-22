@@ -694,6 +694,128 @@ function renderApplication(a, url) {
 
 // ---- Interview practice --------------------------------------------------------------------
 
+const VOICE_ERRORS = {
+  'not-allowed': 'Microphone access is blocked. Click the icon at the left of the address bar, allow the microphone for this site, then press the mic again.',
+  'service-not-allowed': 'This browser has speech recognition turned off. Try Chrome, Edge or Safari, or type your answer.',
+  'audio-capture': 'No microphone was found. Plug one in or check your sound settings, then try again.',
+  network: 'Voice answers need an internet connection. Check yours and try again.',
+  'no-speech': 'We didn’t hear anything. Press the mic and start talking.',
+  'language-not-supported': 'Voice answers aren’t available for your browser’s language. Type your answer instead.',
+};
+
+/** Dictation for a textarea using the browser's speech recognition. */
+function voiceInput(answer, counter) {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const mic = button('Answer by voice', 'mic', 'button ghost');
+  const hint = el('p', '', 'fine voice-hint');
+  hint.setAttribute('aria-live', 'polite');
+  hint.hidden = true;
+  const label = () => mic.querySelector('span:last-child');
+  const say = (text, isError = false) => {
+    hint.textContent = text;
+    hint.hidden = !text;
+    hint.classList.toggle('error', isError);
+  };
+  if (!SpeechRec) {
+    mic.disabled = true;
+    mic.title = 'Voice answers work in Chrome, Edge and Safari.';
+    say('Voice answers work in Chrome, Edge and Safari. In this browser, type your answer.');
+    return { mic, hint, stop() {} };
+  }
+  let rec = null;
+  let wanted = false;
+  let failed = false;
+  let base = '';
+  let heard = '';
+  let restarts = 0;
+  const render = (interim = '') => {
+    answer.value = [base, heard, interim].join(' ').replace(/\s+/g, ' ').trim();
+    counter.update();
+    answer.scrollTop = answer.scrollHeight;
+  };
+  const finish = () => {
+    rec = null;
+    wanted = false;
+    answer.readOnly = false;
+    mic.classList.remove('recording');
+    mic.setAttribute('aria-pressed', 'false');
+    label().textContent = 'Answer by voice';
+    if (!failed) say(heard.trim() ? 'Got it. Edit the text if anything is off, then get feedback.' : '');
+  };
+  const listen = () => {
+    rec = new SpeechRec();
+    rec.lang = /^en/i.test(navigator.language || '') ? navigator.language : 'en-US';
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.onstart = () => {
+      mic.classList.add('recording');
+      mic.setAttribute('aria-pressed', 'true');
+      label().textContent = 'Stop recording';
+      answer.readOnly = true;
+      say('Listening… speak your answer, then press Stop recording.');
+    };
+    rec.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const text = e.results[i][0].transcript;
+        if (e.results[i].isFinal) heard += ` ${text}`;
+        else interim += ` ${text}`;
+      }
+      restarts = 0;
+      render(interim);
+    };
+    rec.onerror = (e) => {
+      if (e.error === 'aborted') return;
+      failed = true;
+      wanted = false;
+      say(VOICE_ERRORS[e.error] || 'Voice input stopped. Press the mic to try again, or type your answer.', true);
+    };
+    rec.onend = () => {
+      render();
+      // Browsers end a session after a pause; keep listening until the student presses Stop.
+      if (wanted && restarts < 3) {
+        restarts++;
+        try {
+          listen();
+          return;
+        } catch {
+          /* fall through */
+        }
+      }
+      finish();
+    };
+    rec.start();
+  };
+  mic.addEventListener('click', () => {
+    if (rec) {
+      wanted = false;
+      rec.stop();
+      return;
+    }
+    base = answer.value.trim();
+    heard = '';
+    failed = false;
+    restarts = 0;
+    wanted = true;
+    try {
+      listen();
+    } catch {
+      failed = true;
+      say('Couldn’t start the microphone. Reload the page and try again.', true);
+      finish();
+    }
+  });
+  return {
+    mic,
+    hint,
+    stop() {
+      if (!rec) return;
+      wanted = false;
+      rec.stop();
+    },
+  };
+}
+
 function buildInterview() {
   const wrap = el('div', null, 'tool-body interview');
   const setup = el('div', null, 'tool-form card-surface');
@@ -709,7 +831,6 @@ function buildInterview() {
   wrap.append(setup, stage);
 
   let session = null;
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   function dots() {
     const d = el('div', null, 'progress-dots');
@@ -732,45 +853,18 @@ function buildInterview() {
     const answer = area({ rows: 7, maxLength: 4000, placeholder: 'Answer as you would out loud. Aim for about a minute.' });
     const counter = wordCounter(answer);
     const actions = el('div', null, 'row-actions');
-    if (SpeechRec) {
-      const mic = button('Answer by voice', 'mic', 'button ghost');
-      let rec = null;
-      mic.addEventListener('click', () => {
-        if (rec) {
-          rec.stop();
-          return;
-        }
-        rec = new SpeechRec();
-        rec.lang = 'en-US';
-        rec.continuous = true;
-        rec.interimResults = false;
-        const base = answer.value;
-        let said = '';
-        rec.onresult = (e) => {
-          for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) said += e.results[i][0].transcript + ' ';
-          answer.value = `${base}${base ? ' ' : ''}${said}`.trim();
-          counter.update();
-        };
-        rec.onend = () => {
-          rec = null;
-          mic.classList.remove('recording');
-          mic.querySelector('span:last-child').textContent = 'Answer by voice';
-        };
-        rec.start();
-        mic.classList.add('recording');
-        mic.querySelector('span:last-child').textContent = 'Stop recording';
-      });
-      actions.append(mic);
-    }
+    const voice = voiceInput(answer, counter);
+    actions.append(voice.mic);
     const submit = button('Get feedback', 'sparkle', 'button');
     actions.append(counter, submit);
-    card.append(answer, actions);
+    card.append(answer, actions, voice.hint);
     const feedback = el('div');
     stage.replaceChildren(card, feedback);
     answer.focus();
     submit.addEventListener('click', async () => {
+      voice.stop();
       if (answer.value.trim().length < 5) return toast('Write or say your answer first.');
-      await busy(submit, 'Listening…', async () => {
+      await busy(submit, 'Reading your answer…', async () => {
         try {
           const { feedback: f } = await proPost('/api/pro/interview/answer', { role: session.role, question: q, answer: answer.value, profile: profilePayload() });
           session.answers.push({ q, a: answer.value, score: f.score });
@@ -782,6 +876,7 @@ function buildInterview() {
           const last = session.idx === session.questions.length - 1;
           const next = button(last ? 'See my summary' : 'Next question', 'arrow', 'button');
           next.addEventListener('click', () => {
+            voice.stop();
             session.idx++;
             last ? summary() : askCurrent();
           });

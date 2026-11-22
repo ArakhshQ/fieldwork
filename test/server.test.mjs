@@ -114,4 +114,6 @@ test('a malformed Supabase URL disables accounts instead of loosening the CSP', 
   const res = await fetch(base + '/api/config');
   assert.equal((await res.json()).accounts, null);
   assert.match(res.headers.get('content-security-policy'), /connect-src 'self';/);
+  assert.match(res.headers.get('permissions-policy'), /microphone=\(self\)/);
+  assert.match(res.headers.get('permissions-policy'), /camera=\(\)/);
 });
