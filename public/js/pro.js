@@ -5,6 +5,7 @@
 // Outlook; Fieldwork never sends email itself.
 import { $, el, toast, openDialog, closeDialog, externalLink, shortDate } from './ui.js';
 import { getState, getResume, getOutreach, setOutreach, track, updateApplication, accessToken } from './store.js';
+import { celebrate } from './ui.js';
 
 const CODE_KEY = 'fieldwork-pro-code';
 let config = { ai: false, preview: false, checkout: null };
@@ -34,10 +35,28 @@ export async function refreshStatus() {
     status = { plan: null, remaining: null };
   }
   paintPlans();
+  window.dispatchEvent(new CustomEvent('fieldwork:plan'));
   return status;
 }
 
-const isPro = () => status.plan === 'pro' || status.plan === 'preview';
+export const isPro = () => status.plan === 'pro' || status.plan === 'preview';
+export const proStatus = () => status;
+export const aiAvailable = () => !!config.ai;
+export const planLabel = () => (status.plan === 'pro' ? 'Pro' : status.plan === 'preview' ? 'Pro preview' : 'Free');
+
+/** True when Pro tools can run; otherwise shows the upgrade dialog and returns false. */
+export async function ensurePro(title = 'This is a Pro tool') {
+  if (!config.ai) {
+    upsell(title);
+    return false;
+  }
+  if (!isPro()) await refreshStatus();
+  if (!isPro()) {
+    upsell(title);
+    return false;
+  }
+  return true;
+}
 
 function paintPlans() {
   const tag = $('pro-tag');
@@ -47,7 +66,7 @@ function paintPlans() {
     tag.textContent = status.plan === 'preview' ? 'Preview active' : 'Active';
     const r = status.remaining;
     $('pro-note').textContent = r
-      ? `This month you have ${r.briefing} briefings and ${r.email} emails left.`
+      ? `Left this month: ${r.review ?? '–'} reviews, ${r.application ?? '–'} applications, ${r.briefing} lab briefings, ${r.email} emails, ${r.chat ?? '–'} coach messages.`
       : 'Pro is active on this device.';
   } else {
     tag.textContent = config.checkout ? 'Available' : 'Coming soon';
@@ -55,7 +74,7 @@ function paintPlans() {
   $('preview-code').hidden = !config.preview || status.plan === 'pro';
 }
 
-function previewCodeDialog() {
+export function previewCodeDialog() {
   const body = openDialog('Pro preview code', ['Enter the code you were given. It’s saved on this device only.']);
   const form = el('form', null, 'stack');
   const label = el('label', 'Code');
@@ -98,7 +117,7 @@ function previewCodeDialog() {
 
 function upsell(title) {
   const body = openDialog(title, [
-    'Pro reads the lab’s grant and recent papers, explains them in plain English, and writes a short, personal email to the professor from your profile and résumé.',
+    'Pro gives you an application team: a coach, résumé and essay reviews, an application builder, interview practice, letter requests, and personal emails to professors.',
   ]);
   const actions = el('div', null, 'form-actions');
   if (config.checkout) {
@@ -117,16 +136,67 @@ function upsell(title) {
   body.append(actions);
 }
 
-async function proPost(path, payload) {
+function afterUse(data) {
+  if (data && typeof data.remaining === 'number') refreshStatus();
+}
+
+export async function proPost(path, payload) {
   const res = await fetch(path, { method: 'POST', headers: await proHeaders(), body: JSON.stringify(payload) });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw Object.assign(new Error(data.error || 'Something went wrong. Try again.'), { code: data.code });
+  if (!res.ok) {
+    if (data.code === 'pro_required') upsell('This is a Pro tool');
+    throw Object.assign(new Error(data.error || 'Something went wrong. Try again.'), { code: data.code });
+  }
+  afterUse(data);
   return data;
 }
 
-const profilePayload = () => {
+/** POST and read a server-sent event stream; onText gets each piece of text. */
+export async function proStream(path, payload, onText) {
+  const res = await fetch(path, { method: 'POST', headers: await proHeaders(), body: JSON.stringify(payload) });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    if (data.code === 'pro_required') upsell('This is a Pro tool');
+    throw new Error(data.error || 'Something went wrong. Try again.');
+  }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let done = null;
+  for (;;) {
+    const { value, done: end } = await reader.read();
+    if (end) break;
+    buffer += decoder.decode(value, { stream: true });
+    let i;
+    while ((i = buffer.indexOf('\n\n')) >= 0) {
+      const chunk = buffer.slice(0, i).replace(/^data: ?/, '');
+      buffer = buffer.slice(i + 2);
+      let evt;
+      try {
+        evt = JSON.parse(chunk);
+      } catch {
+        continue;
+      }
+      if (evt.t) onText(evt.t);
+      if (evt.error) throw new Error(evt.error);
+      if (evt.done) done = evt;
+    }
+  }
+  afterUse(done);
+  return done;
+}
+
+export const profilePayload = () => {
   const p = getState().profile;
-  return { name: p.name, school: p.school, level: p.level, major: p.major, interests: p.interests, available: p.available };
+  return { name: p.name, school: p.school, level: p.level, major: p.major, interests: p.interests, available: p.available, city: p.city, state: p.state };
+};
+
+export const workspacePayload = () => {
+  const { saved, applications } = getState();
+  return {
+    saved: saved.slice(0, 25).map((s) => `${s.title}${s.host ? ` (${s.host})` : ''}`),
+    applications: applications.slice(0, 25).map((a) => ({ title: a.title, status: a.status, deadline: a.deadline })),
+  };
 };
 
 function section(title, ...children) {
@@ -203,15 +273,7 @@ function loading(container, text) {
 
 /** Entry point from a lab card. */
 export async function writeToProfessor(lab) {
-  if (!config.ai) {
-    upsell('Write to this professor');
-    return;
-  }
-  if (!isPro()) await refreshStatus();
-  if (!isPro()) {
-    upsell('Write to this professor');
-    return;
-  }
+  if (!(await ensurePro('Write to this professor'))) return;
   const body = openDialog(lab.pi ? `Write to ${lab.pi}` : 'Write to this professor', []);
   body.closest('dialog').classList.add('wide');
   const resume = getResume();
@@ -297,10 +359,12 @@ export async function writeToProfessor(lab) {
             notes: `Emailed ${shortDate(new Date())}${sentMail.to ? ` to ${sentMail.to}` : ''}. Follow up if no reply by ${shortDate(followUp)}.`,
           });
           closeDialog();
-          toast(result2 === 'full' ? 'Applications is full.' : 'Added to Applications. We’ll count down to your follow-up date.');
+          celebrate();
+          toast(result2 === 'full' ? 'Applications is full.' : 'Sent! Added to Applications with a follow-up countdown.');
         },
       });
       if (typeof remaining === 'number') status.remaining = { ...(status.remaining || {}), email: remaining };
+      // proPost refreshed the plan counts already.
     } catch (e) {
       mail.replaceChildren(el('p', e.message, 'form-error'));
     } finally {
@@ -317,11 +381,7 @@ export async function draftFollowUp(app) {
     toast('We only have follow-ups for emails written here.');
     return;
   }
-  if (!isPro()) await refreshStatus();
-  if (!config.ai || !isPro()) {
-    upsell('Follow up with this professor');
-    return;
-  }
+  if (!(await ensurePro('Follow up with this professor'))) return;
   const body = openDialog(`Follow up with ${sent.pi || 'the professor'}`, []);
   body.closest('dialog').classList.add('wide');
   const mail = el('div', null, 'mail');

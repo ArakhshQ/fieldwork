@@ -127,3 +127,116 @@ export function fillStateSelect(select, emptyLabel = 'Any state') {
   select.replaceChildren(Object.assign(el('option', emptyLabel), { value: '' }));
   for (const [, name] of US_STATES) select.append(Object.assign(el('option', name), { value: name }));
 }
+
+// ---- Celebrations ---------------------------------------------------------
+/** A short burst of confetti. Skipped when the student prefers reduced motion. */
+export function celebrate() {
+  const canvas = $('confetti');
+  if (!canvas || reducedMotion()) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = innerWidth * dpr;
+  canvas.height = innerHeight * dpr;
+  ctx.scale(dpr, dpr);
+  const colors = ['#6a4bff', '#ffc83d', '#22c38e', '#ff6b5b', '#3fa7ff'];
+  const parts = Array.from({ length: 140 }, () => ({
+    x: innerWidth / 2 + (Math.random() - 0.5) * 120,
+    y: innerHeight * 0.38,
+    vx: (Math.random() - 0.5) * 14,
+    vy: -Math.random() * 13 - 5,
+    r: Math.random() * Math.PI,
+    vr: (Math.random() - 0.5) * 0.3,
+    w: 6 + Math.random() * 6,
+    h: 8 + Math.random() * 8,
+    c: colors[Math.floor(Math.random() * colors.length)],
+  }));
+  canvas.classList.add('on');
+  const start = performance.now();
+  const frame = (t) => {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of parts) {
+      p.vy += 0.35;
+      p.vx *= 0.99;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.r += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    if (t - start < 2200) requestAnimationFrame(frame);
+    else {
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      canvas.classList.remove('on');
+    }
+  };
+  requestAnimationFrame(frame);
+}
+
+// ---- Small rich text ------------------------------------------------------------
+/** Render the coach's light markdown (paragraphs, "- " lists, **bold**) safely as DOM. */
+export function richText(text) {
+  const frag = document.createDocumentFragment();
+  const inline = (parent, str) => {
+    const parts = String(str).split(/(\*\*[^*]+\*\*)/g);
+    for (const part of parts) {
+      if (/^\*\*[^*]+\*\*$/.test(part)) parent.append(el('strong', part.slice(2, -2)));
+      else if (part) parent.append(document.createTextNode(part));
+    }
+  };
+  let list = null;
+  for (const raw of String(text).split('\n')) {
+    const lineText = raw.trimEnd();
+    const bullet = lineText.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)$/);
+    if (bullet) {
+      if (!list) {
+        list = el(/^\s*\d/.test(lineText) ? 'ol' : 'ul');
+        frag.append(list);
+      }
+      const li = el('li');
+      inline(li, bullet[1]);
+      list.append(li);
+      continue;
+    }
+    list = null;
+    if (!lineText.trim()) continue;
+    const heading = lineText.match(/^#{1,4}\s+(.*)$/);
+    const node = el(heading ? 'h4' : 'p');
+    inline(node, heading ? heading[1] : lineText);
+    frag.append(node);
+  }
+  return frag;
+}
+
+/** An animated score ring (0-100). */
+export function scoreRing(value, label = 'score') {
+  const wrap = el('div', null, 'score-ring');
+  const v = Math.max(0, Math.min(100, Number(value) || 0));
+  const tone = v >= 85 ? 'mint' : v >= 65 ? 'sun' : 'coral';
+  wrap.classList.add(tone);
+  wrap.innerHTML =
+    '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" class="ring-track"/><circle cx="60" cy="60" r="50" class="ring-fill"/></svg>';
+  const fill = wrap.querySelector('.ring-fill');
+  const circ = 2 * Math.PI * 50;
+  fill.style.strokeDasharray = String(circ);
+  fill.style.strokeDashoffset = String(circ);
+  requestAnimationFrame(() => requestAnimationFrame(() => (fill.style.strokeDashoffset = String(circ * (1 - v / 100)))));
+  const text = el('div', null, 'score-text');
+  text.append(el('strong', String(Math.round(v))), el('span', label));
+  wrap.append(text);
+  wrap.setAttribute('role', 'img');
+  wrap.setAttribute('aria-label', `${label}: ${Math.round(v)} out of 100`);
+  return wrap;
+}
+
+export async function copyText(text, message = 'Copied.') {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(message);
+  } catch {
+    toast('Couldn’t copy. Select the text and copy it yourself.');
+  }
+}

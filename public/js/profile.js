@@ -24,7 +24,7 @@ export function renderAccountButton() {
   b.hidden = !accounts;
   b.classList.toggle('signed-in', !!user);
   if (user) {
-    b.textContent = (user.email || '?').slice(0, 1).toUpperCase();
+    b.textContent = 'Account';
     b.setAttribute('aria-label', `Account: ${user.email}`);
     b.title = user.email;
   } else {

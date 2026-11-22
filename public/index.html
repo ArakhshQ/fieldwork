@@ -2,48 +2,103 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#6a4bff" />
     <meta
       name="description"
-      content="Find research positions and internships near home or anywhere. Save, compare and track your applications with Fieldwork."
+      content="Find research positions and internships, then get AI help with résumés, essays, applications, interviews and emails to professors."
     />
     <title>Fieldwork · Research and internships for students</title>
     <link rel="icon" href="/favicon.svg" />
-    <link rel="preload" href="/fonts/young-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/rubik-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/figtree-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/style.css" />
     <script src="/vendor/supabase-2.119.0.js" defer></script>
     <script src="/js/main.js" type="module"></script>
   </head>
-  <body>
+  <body class="app-body">
     <a class="skip" href="#main">Skip to content</a>
 
-    <header class="site-header">
-      <a class="brand" href="#discover" aria-label="Fieldwork home">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-          <rect x="1" y="1" width="30" height="30" rx="3" />
-          <path d="M1 11h30M1 21h30M11 1v30M21 1v30" class="brand-grid" />
-          <path d="M16 7c-3.3 0-6 2.6-6 5.9 0 4.4 6 11.1 6 11.1s6-6.7 6-11.1C22 9.6 19.3 7 16 7z" class="brand-pin" />
-          <circle cx="16" cy="13" r="2.2" class="brand-dot" />
-        </svg>
+    <aside class="sidebar" aria-label="Fieldwork">
+      <a class="brand" href="#home" aria-label="Fieldwork home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
         <span>fieldwork</span>
       </a>
-      <nav class="tabs" aria-label="Main">
-        <a href="#discover" data-view="discover">Discover</a>
-        <a href="#saved" data-view="saved">Saved <span class="count" id="saved-count">0</span></a>
-        <a href="#applications" data-view="applications">Applications</a>
-        <a href="#plans" data-view="plans">Plans</a>
+      <nav class="side-nav" aria-label="Main">
+        <a href="#home" data-view="home" data-icon="home">Home</a>
+        <a href="#discover" data-view="discover" data-icon="compass">Discover</a>
+        <a href="#saved" data-view="saved" data-icon="bookmark">Saved <span class="count" id="saved-count">0</span></a>
+        <a href="#applications" data-view="applications" data-icon="board">Applications</a>
+        <a href="#ai" data-view="ai" data-icon="sparkle">AI Studio <span class="pro-badge">Pro</span></a>
+        <a href="#plans" data-view="plans" data-icon="crown">Plans</a>
       </nav>
-      <div class="account">
-        <a href="#profile" class="profile-link" data-view="profile">Profile</a>
+      <div class="side-foot">
+        <a href="#profile" class="me" data-view="profile">
+          <span class="avatar" id="me-avatar">?</span>
+          <span class="me-text"><strong id="me-name">Your profile</strong><small id="me-plan">Free</small></span>
+        </a>
         <button id="account-button" class="account-button" hidden>Sign in</button>
       </div>
+    </aside>
+
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="Fieldwork home"><span class="brand-mark" aria-hidden="true"><span></span></span><span>fieldwork</span></a>
+      <a href="#profile" class="avatar" id="top-avatar" aria-label="Profile">?</a>
     </header>
 
     <main id="main">
+      <!-- Home ------------------------------------------------------------ -->
+      <section id="view-home" class="view page home" data-view="home">
+        <div class="welcome">
+          <div class="welcome-text">
+            <p class="welcome-date" id="home-date"></p>
+            <h1 id="home-hello">Hi there</h1>
+            <p id="home-summary">Let’s find you a research spot or internship.</p>
+            <div class="welcome-actions">
+              <a class="button big" href="#discover" data-icon="compass">Start searching</a>
+              <a class="button big light" href="#ai/coach" data-icon="chat">Ask your coach</a>
+            </div>
+          </div>
+          <div class="welcome-art" aria-hidden="true">
+            <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+            <div class="ring-card">
+              <svg viewBox="0 0 120 120" class="ring"><circle cx="60" cy="60" r="50" class="ring-track" /><circle cx="60" cy="60" r="50" class="ring-fill" id="home-ring" /></svg>
+              <div class="ring-label"><strong id="home-ring-value">0%</strong><span>profile ready</span></div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="section-title">What do you want to do?</h2>
+        <div class="actions-grid">
+          <a class="action-tile violet" href="#discover" data-go="research" data-icon="flask"><strong>Find research</strong><span>Labs, REUs and summer programs</span></a>
+          <a class="action-tile sky" href="#discover" data-go="internship" data-icon="briefcase"><strong>Local internships</strong><span>Live postings near you</span></a>
+          <a class="action-tile sun" href="#ai/resume" data-icon="file"><strong>Review my résumé</strong><span>Line-by-line fixes</span><em class="pro-badge">Pro</em></a>
+          <a class="action-tile mint" href="#ai/application" data-icon="checklist"><strong>Build an application</strong><span>Checklist, eligibility, drafts</span><em class="pro-badge">Pro</em></a>
+          <a class="action-tile coral" href="#ai/interview" data-icon="mic"><strong>Practice an interview</strong><span>Real questions, honest feedback</span><em class="pro-badge">Pro</em></a>
+          <a class="action-tile lilac" href="#ai/coach" data-icon="chat"><strong>Ask the coach</strong><span>A plan made for you</span><em class="pro-badge">Pro</em></a>
+        </div>
+
+        <div class="home-grid">
+          <section class="panel">
+            <div class="panel-head"><h2 data-icon="calendar">Coming up</h2><a href="#applications" class="link-button">All applications</a></div>
+            <ul id="home-deadlines" class="deadline-list"></ul>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h2 data-icon="target">Your next steps</h2></div>
+            <ul id="home-steps" class="steps-list"></ul>
+          </section>
+          <section class="panel stats-panel">
+            <div class="panel-head"><h2 data-icon="bolt">Your progress</h2></div>
+            <div class="stats" id="home-stats"></div>
+          </section>
+        </div>
+      </section>
+
       <!-- Discover -------------------------------------------------------- -->
-      <section id="view-discover" class="view" data-view="discover">
+      <section id="view-discover" class="view discover" data-view="discover" hidden>
         <div class="hero">
-          <h1 class="lede">Research and internships, near home or anywhere.</h1>
+          <p class="eyebrow-line">Discover</p>
+          <h1 class="hero-title">Find your next research spot or internship.</h1>
           <form id="search-form" class="sentence" autocomplete="off">
             <span class="word">I’m looking for</span>
             <button type="button" class="slot" data-picker="type" aria-haspopup="dialog" id="slot-type">
@@ -60,10 +115,7 @@
             <button type="button" class="slot" data-picker="season" aria-haspopup="dialog" id="slot-season">
               at any time
             </button>
-            <button class="go" id="submit">
-              <span>Search</span>
-              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-5 5 5-5 5" /></svg>
-            </button>
+            <button class="go" id="submit" data-icon="arrow"><span>Search</span></button>
           </form>
 
           <div class="quick" role="group" aria-label="Quick preferences">
@@ -146,7 +198,8 @@
       <!-- Saved ----------------------------------------------------------- -->
       <section id="view-saved" class="view page" data-view="saved" hidden>
         <div class="page-head">
-          <h2>Saved</h2>
+          <p class="eyebrow-line">Saved</p>
+          <h1>Your shortlist</h1>
           <p id="saved-sub">Your shortlist. Tick two or three to compare them side by side.</p>
         </div>
         <div id="saved-cards" class="cards"></div>
@@ -165,7 +218,8 @@
       <!-- Applications ---------------------------------------------------- -->
       <section id="view-applications" class="view page" data-view="applications" hidden>
         <div class="page-head">
-          <h2>Applications</h2>
+          <p class="eyebrow-line">Applications</p>
+          <h1>Everything you’re applying to</h1>
           <p>Drag a card to move it to the next stage. You set every status yourself.</p>
           <div class="page-actions">
             <button type="button" class="button" id="add-application">Add an application</button>
@@ -175,10 +229,33 @@
         <div id="board" class="board"></div>
       </section>
 
+      <!-- AI Studio ---------------------------------------------------------- -->
+      <section id="view-ai" class="view page studio" data-view="ai" hidden>
+        <div id="studio-home">
+          <div class="page-head">
+            <p class="eyebrow-line">AI Studio <span class="pro-badge">Pro</span></p>
+            <h1>Your application team, on call.</h1>
+            <p>Every tool uses your profile and résumé, so the help fits you. Nothing is sent anywhere without you.</p>
+            <div id="studio-plan" class="studio-plan"></div>
+          </div>
+          <div class="tools-grid">
+            <a class="tool-tile lilac" href="#ai/coach" data-icon="chat"><strong>Coach</strong><span>Ask anything. Get a plan for your semester, your list or your next move.</span></a>
+            <a class="tool-tile sun" href="#ai/resume" data-icon="file"><strong>Résumé review</strong><span>Upload your résumé. Get a score, line-by-line fixes and tailoring for a listing.</span></a>
+            <a class="tool-tile violet" href="#ai/essay" data-icon="pen"><strong>Essay review</strong><span>Personal statements and short answers, with edits that keep your voice.</span></a>
+            <a class="tool-tile mint" href="#ai/application" data-icon="checklist"><strong>Application builder</strong><span>Paste a listing. Get eligibility, the deadline, a checklist and drafted answers.</span></a>
+            <a class="tool-tile coral" href="#ai/interview" data-icon="mic"><strong>Interview practice</strong><span>Five real questions for your role, with feedback on every answer.</span></a>
+            <a class="tool-tile sky" href="#ai/letter" data-icon="mail"><strong>Recommendation letters</strong><span>A respectful request email and a brag sheet that makes the letter easy.</span></a>
+            <a class="tool-tile ink" href="#discover" data-go="research" data-icon="flask"><strong>Email a professor</strong><span>Find a newly funded lab, get a briefing and a personal email.</span></a>
+          </div>
+        </div>
+        <div id="studio-tool" hidden></div>
+      </section>
+
       <!-- Plans ----------------------------------------------------------- -->
       <section id="view-plans" class="view page" data-view="plans" hidden>
         <div class="page-head">
-          <h2>Plans</h2>
+          <p class="eyebrow-line">Plans</p>
+          <h1>Free to search. Pro when you’re applying.</h1>
           <p>Everything you use today is free. Paid features are being built and are not for sale yet.</p>
         </div>
         <div class="plans">
@@ -197,11 +274,12 @@
             <h3>Pro <span class="tag" id="pro-tag">Coming soon</span></h3>
             <p class="plan-price">$19 a month, or $59 for a 4-month season</p>
             <ul>
-              <li>A one-page briefing on any lab: what they study, what students do there, how you fit</li>
-              <li>A personal email to the professor, written from your profile and résumé</li>
-              <li>The professor’s email when it’s listed on a public page</li>
-              <li>Follow-up drafts and reminders when they don’t reply</li>
-              <li>Up to 40 briefings and 80 emails a month</li>
+              <li>Coach chat that knows your profile, list and deadlines</li>
+              <li>Résumé and essay reviews with line-by-line fixes</li>
+              <li>Application builder: eligibility, deadline, checklist and drafted answers</li>
+              <li>Interview practice with feedback on every answer</li>
+              <li>Lab briefings and personal emails to professors, plus follow-ups</li>
+              <li>Recommendation letter requests and brag sheets</li>
             </ul>
             <p class="fine" id="pro-note">Emails open in your own Gmail or Outlook, and you press Send.</p>
             <div class="form-actions">
@@ -215,7 +293,8 @@
       <!-- Profile --------------------------------------------------------- -->
       <section id="view-profile" class="view page" data-view="profile" hidden>
         <div class="page-head">
-          <h2>Profile</h2>
+          <p class="eyebrow-line">Profile</p>
+          <h1>About you</h1>
           <p id="profile-where">Saved on this device. Sign in to keep it in sync everywhere.</p>
         </div>
         <form id="profile-form" class="profile-form">
@@ -264,13 +343,17 @@
           </div>
         </form>
         <p id="profile-status" class="status" role="status"></p>
+        <p class="legal-links"><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscriptions">Subscriptions</a></p>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <span>Fieldwork · free beta</span>
-      <a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscriptions">Subscriptions</a>
-    </footer>
+    <nav class="tabbar" aria-label="Main">
+      <a href="#home" data-view="home" data-icon="home"><span>Home</span></a>
+      <a href="#discover" data-view="discover" data-icon="compass"><span>Discover</span></a>
+      <a href="#applications" data-view="applications" data-icon="board"><span>Apps</span></a>
+      <a href="#ai" data-view="ai" data-icon="sparkle"><span>AI</span></a>
+      <a href="#profile" data-view="profile" data-icon="user"><span>Me</span></a>
+    </nav>
 
     <!-- Shared layers -------------------------------------------------------- -->
     <div id="picker" class="picker" role="dialog" aria-modal="false" hidden></div>
@@ -307,5 +390,6 @@
       </div>
     </dialog>
     <div id="toast" class="toast" role="status" hidden></div>
+    <canvas id="confetti" aria-hidden="true"></canvas>
   </body>
 </html>
