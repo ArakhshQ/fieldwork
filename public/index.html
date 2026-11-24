@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <meta name="theme-color" content="#6a4bff" />
+    <meta name="theme-color" content="#f6f6f3" />
     <meta
       name="description"
       content="Find research positions and internships, then get AI help with résumés, essays, applications, interviews and emails to professors."
@@ -11,8 +11,8 @@
     <title>Fieldwork · Research and internships for students</title>
     <link rel="icon" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preload" href="/fonts/rubik-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/figtree-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jost-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/style.css" />
     <script src="/vendor/supabase-2.119.0.js" defer></script>
     <script src="/js/main.js" type="module"></script>
@@ -83,6 +83,7 @@
           <section class="panel">
             <div class="panel-head"><h2 data-icon="calendar">Coming up</h2><a href="#applications" class="link-button">All applications</a></div>
             <ul id="home-deadlines" class="deadline-list"></ul>
+            <button type="button" class="button small ghost calendar-button" id="home-calendar" data-icon="calendar" hidden><span>Add these dates to my calendar</span></button>
           </section>
           <section class="panel">
             <div class="panel-head"><h2 data-icon="target">Your next steps</h2></div>
@@ -260,7 +261,7 @@
           <p>Everything you use today is free. Paid features are being built and are not for sale yet.</p>
         </div>
         <div class="plans">
-          <article class="plan">
+          <article class="plan plan-silver">
             <h3>Free</h3>
             <p class="plan-price">$0, for good</p>
             <ul>
@@ -271,7 +272,7 @@
             </ul>
             <a class="button" href="#discover">Start searching</a>
           </article>
-          <article class="plan plan-pro">
+          <article class="plan plan-pro plan-gold">
             <h3>Pro <span class="tag" id="pro-tag">Coming soon</span></h3>
             <p class="plan-price">$19 a month, or $59 for a 4-month season</p>
             <ul>
@@ -289,6 +290,28 @@
             </div>
           </article>
         </div>
+        <section class="why-pro" aria-labelledby="why-pro-title">
+          <h2 id="why-pro-title">Why students choose Pro</h2>
+          <div class="why-grid">
+            <article>
+              <h3>Built for research, not only job posts</h3>
+              <p>Most undergraduate research spots are never posted. Pro finds labs that were just funded, explains their work in plain words, and writes a specific email to the professor.</p>
+            </article>
+            <article>
+              <h3>One plan instead of four</h3>
+              <p>Résumé scanners, interview coaches and premium networking tools often cost $25 to $50 a month each, some far more. Pro covers reviews, applications, interview practice and outreach for $19, or $59 for a whole season.</p>
+            </article>
+            <article>
+              <h3>Checked against the source</h3>
+              <p>A deadline or eligibility rule is shown only when the listing says it word for word, and a professor’s email only when it appears on a public page.</p>
+            </article>
+            <article>
+              <h3>Progress you can see</h3>
+              <p>Track who you emailed and who replied, see your reply rate, and put every deadline and follow-up in your own calendar with a reminder the day before.</p>
+            </article>
+          </div>
+          <p class="fine">Not sure yet? Ask for a refund within 14 days of your first payment.</p>
+        </section>
       </section>
 
       <!-- Profile --------------------------------------------------------- -->

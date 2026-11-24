@@ -69,7 +69,7 @@ test('app, assets and policy routes are served with security headers', async (t)
     assert.equal(response.status, 200, path);
     assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
   }
-  const font = await fetch(base + '/fonts/rubik-latin-700-normal.woff2');
+  const font = await fetch(base + '/fonts/cormorant-garamond-latin-600-normal.woff2');
   assert.equal(font.status, 200);
   assert.match(font.headers.get('cache-control'), /immutable/);
   const html = await fetch(base + '/').then((r) => r.text());

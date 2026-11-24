@@ -71,6 +71,8 @@ Pro students get a team of AI tools (`lib/tools.mjs`, routes in `lib/pro-routes.
 | Recommendation-letter kit (request email, brag sheet, timeline) | `/api/pro/letter` | Claude Sonnet 5.5 |
 | Coach chat, streamed over SSE | `/api/pro/coach` | Claude Sonnet 5.5 |
 
+Search results carry a match grade: Platinum when every search word is in the title, Gold when every word matches somewhere, Silver for a partial match (`lib/match.mjs`).
+
 The application builder only shows a deadline when its quote appears word for word on the page, and drops quotes it can't find. Lab emails are only shown when the address appears verbatim on an academic page. Fieldwork never sends email; drafts open in the student's own Gmail or Outlook.
 
 Access (`lib/pro.mjs`): Pro preview codes (`PRO_PREVIEW_CODES`) work now; once accounts are on, an active Paddle subscription unlocks Pro. Monthly limits for Pro: 30 briefings, 60 emails, 15 reviews, 15 applications, 10 interviews, 10 letter kits, 10 imports and 150 chat messages (about half for preview codes), enforced in the database by `consume_ai_quota()` for subscribers. Inputs are validated before any allowance is used. `AI_DAILY_BUDGET_USD` (default 10) pauses all AI calls for the rest of the UTC day once reached. Each call's cost is logged to the server log.
@@ -115,7 +117,7 @@ The daily, concurrency and request-rate circuit breakers are **per server instan
 - `lib/search.mjs`: query planning, provider adapter, deduplication, evidence analysis
 - `public/index.html`, `public/style.css`: the interface
 - `public/js/`: ES modules — `main` (routing), `store` (local + synced data), `discover` (sentence search and results), `cards`, `saved` (compare), `applications` (drag-and-drop board), `profile` (profile and sign-in), `ui` (helpers)
-- `public/vendor/`, `public/fonts/`: self-hosted Supabase client (v2.119.0) and fonts (Young Serif, Schibsted Grotesk; SIL Open Font License)
+- `public/vendor/`, `public/fonts/`: self-hosted Supabase client (v2.119.0) and fonts (Cormorant Garamond, Jost; SIL Open Font License)
 - `supabase/001_accounts.sql`: database tables and security rules
 - `test/`: behavior and API tests
 - `render.yaml`: Render deployment blueprint

@@ -138,7 +138,7 @@ export function celebrate() {
   canvas.width = innerWidth * dpr;
   canvas.height = innerHeight * dpr;
   ctx.scale(dpr, dpr);
-  const colors = ['#6a4bff', '#ffc83d', '#22c38e', '#ff6b5b', '#3fa7ff'];
+  const colors = ['#b8924a', '#e3c88f', '#c9cdd3', '#eef0f3', '#1f4e8c'];
   const parts = Array.from({ length: 140 }, () => ({
     x: innerWidth / 2 + (Math.random() - 0.5) * 120,
     y: innerHeight * 0.38,
@@ -239,4 +239,60 @@ export async function copyText(text, message = 'Copied.') {
   } catch {
     toast('Couldn’t copy. Select the text and copy it yourself.');
   }
+}
+
+const icsText = (v) => String(v || '').replace(/[\\;,]/g, (c) => `\\${c}`).replace(/\r?\n/g, '\\n');
+const icsDate = (iso) => iso.replaceAll('-', '');
+function fold(line) {
+  const out = [];
+  while (line.length > 74) {
+    out.push(line.slice(0, 74));
+    line = ` ${line.slice(74)}`;
+  }
+  out.push(line);
+  return out.join('\r\n');
+}
+
+/**
+ * Download an .ics file of all-day events with a reminder at 9am the day before.
+ * @param events [{ date: 'YYYY-MM-DD', title, details, id }]
+ */
+export function downloadCalendar(events, filename = 'fieldwork-dates.ics') {
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Fieldwork//Deadlines//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+  for (const e of events) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(e.date || '')) continue;
+    const next = new Date(`${e.date}T12:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + 1);
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:${icsText(`${e.id || e.title}-${e.date}`).replace(/[^A-Za-z0-9.@-]/g, '')}@fieldwork`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${icsDate(e.date)}`,
+      `DTEND;VALUE=DATE:${icsDate(next.toISOString().slice(0, 10))}`,
+      fold(`SUMMARY:${icsText(String(e.title).slice(0, 120))}`),
+      ...(e.details ? [fold(`DESCRIPTION:${icsText(String(e.details).slice(0, 800))}`)] : []),
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      fold(`DESCRIPTION:${icsText(String(e.title).slice(0, 120))}`),
+      'TRIGGER:-PT15H',
+      'END:VALARM',
+      'END:VEVENT',
+    );
+  }
+  lines.push('END:VCALENDAR');
+  const blob = new Blob([lines.join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/** The calendar event for an application's date: a deadline, or a follow-up for an emailed lab. */
+export function applicationEvent(a, followUp = false) {
+  const what = followUp ? `Follow up: ${a.title}` : a.status === 'Interview' ? `Interview: ${a.title}` : `Deadline: ${a.title}`;
+  return { id: a.id, date: a.deadline, title: what, details: [a.notes, a.url].filter(Boolean).join('\n') };
 }

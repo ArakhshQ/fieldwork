@@ -131,3 +131,15 @@ test('remote data is on in production, off in tests, and must be https', () => {
   assert.equal(dataUrlFor({ DATA_URL: 'http://insecure.test' }), '');
   assert.equal(dataUrlFor({ DATA_URL: 'https://cdn.example.com/data/' }), 'https://cdn.example.com/data');
 });
+
+test('results carry a Platinum, Gold or Silver match grade', async () => {
+  const { matchGrade } = await import('../lib/match.mjs');
+  assert.equal(matchGrade(2, 2, 2), 'platinum');
+  assert.equal(matchGrade(2, 2, 1), 'gold');
+  assert.equal(matchGrade(2, 1, 1), 'silver');
+  assert.equal(matchGrade(0, 0, 0), null);
+  const byId = (p) => Object.fromEntries([...Object.values(searchResearch(CATALOG, p)).flatMap((g) => g.results)].map((r) => [r.id, r.match]));
+  assert.deepEqual(byId({ q: 'neural engineering' }), { p1: 'platinum', l1: 'silver' });
+  assert.equal(byId({ q: 'memory hippocampus' }).l1, 'gold');
+  assert.equal(searchResearch(CATALOG, {}).labs.results[0].match, undefined);
+});

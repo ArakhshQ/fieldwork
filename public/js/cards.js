@@ -54,6 +54,12 @@ export function trackButton(r) {
   return b;
 }
 
+const MATCH = {
+  platinum: { label: 'Platinum match', why: 'Every word you searched for is in the title.' },
+  gold: { label: 'Gold match', why: 'Every word you searched for appears in this listing.' },
+  silver: { label: 'Silver match', why: 'Matches part of your search.' },
+};
+
 /**
  * @param r opportunity from /api/search (or a saved snapshot)
  * @param opts.select optional { checked, onChange } to show a compare checkbox
@@ -64,6 +70,11 @@ export function opportunityCard(r, opts = {}) {
 
   const head = el('div', null, 'card-head');
   head.append(el('span', r.kind || 'Opportunity', 'kind'));
+  if (MATCH[r.match]) {
+    const m = el('span', MATCH[r.match].label, `match match-${r.match}`);
+    m.title = MATCH[r.match].why;
+    head.append(m);
+  }
   if (r.season) head.append(el('span', r.season, 'season'));
   head.append(el('span', r.host || '', 'host'));
   if (opts.select) {
