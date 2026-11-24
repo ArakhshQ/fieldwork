@@ -27,11 +27,11 @@ function paintPlanBar() {
   }
   if (isPro()) {
     const s = proStatus();
-    bar.append(el('span', s.plan === 'preview' ? 'Pro preview is on' : 'Pro is on', 'plan-chip on'));
+    bar.append(el('span', s.plan === 'preview' ? 'Gold preview is on' : 'Gold is on', 'plan-chip on'));
     return;
   }
   bar.append(el('span', 'You’re on Free', 'plan-chip'));
-  const get = el('a', 'See Pro', 'button small');
+  const get = el('a', 'See Gold', 'button small');
   get.href = '#plans';
   const code = el('button', 'I have a preview code', 'link-button');
   code.type = 'button';

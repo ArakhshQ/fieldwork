@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <meta name="theme-color" content="#6a4bff" />
+    <meta name="theme-color" content="#f6f6f3" />
     <meta
       name="description"
       content="Find research positions and internships, then get AI help with résumés, essays, applications, interviews and emails to professors."
@@ -11,8 +11,8 @@
     <title>Fieldwork · Research and internships for students</title>
     <link rel="icon" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preload" href="/fonts/rubik-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/figtree-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jost-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/style.css" />
     <script src="/vendor/supabase-2.119.0.js" defer></script>
     <script src="/js/main.js" type="module"></script>
@@ -30,7 +30,7 @@
         <a href="#discover" data-view="discover" data-icon="compass">Discover</a>
         <a href="#saved" data-view="saved" data-icon="bookmark">Saved <span class="count" id="saved-count">0</span></a>
         <a href="#applications" data-view="applications" data-icon="board">Applications</a>
-        <a href="#ai" data-view="ai" data-icon="sparkle">AI Studio <span class="pro-badge">Pro</span></a>
+        <a href="#ai" data-view="ai" data-icon="sparkle">AI Studio <span class="pro-badge">Gold</span></a>
         <a href="#plans" data-view="plans" data-icon="crown">Plans</a>
       </nav>
       <div class="side-foot">
@@ -73,10 +73,10 @@
         <div class="actions-grid">
           <a class="action-tile violet" href="#discover" data-go="research" data-icon="flask"><strong>Find research</strong><span>Labs, REUs and summer programs</span></a>
           <a class="action-tile sky" href="#discover" data-go="internship" data-icon="briefcase"><strong>Local internships</strong><span>Live postings near you</span></a>
-          <a class="action-tile sun" href="#ai/resume" data-icon="file"><strong>Review my résumé</strong><span>Line-by-line fixes</span><em class="pro-badge">Pro</em></a>
-          <a class="action-tile mint" href="#ai/application" data-icon="checklist"><strong>Build an application</strong><span>Checklist, eligibility, drafts</span><em class="pro-badge">Pro</em></a>
-          <a class="action-tile coral" href="#ai/interview" data-icon="mic"><strong>Practice an interview</strong><span>Real questions, honest feedback</span><em class="pro-badge">Pro</em></a>
-          <a class="action-tile lilac" href="#ai/coach" data-icon="chat"><strong>Ask the coach</strong><span>A plan made for you</span><em class="pro-badge">Pro</em></a>
+          <a class="action-tile sun" href="#ai/resume" data-icon="file"><strong>Review my résumé</strong><span>Line-by-line fixes</span><em class="pro-badge">Gold</em></a>
+          <a class="action-tile mint" href="#ai/application" data-icon="checklist"><strong>Build an application</strong><span>Checklist, eligibility, drafts</span><em class="pro-badge">Gold</em></a>
+          <a class="action-tile coral" href="#ai/interview" data-icon="mic"><strong>Practice an interview</strong><span>Real questions, honest feedback</span><em class="pro-badge">Gold</em></a>
+          <a class="action-tile lilac" href="#ai/coach" data-icon="chat"><strong>Ask the coach</strong><span>A plan made for you</span><em class="pro-badge">Gold</em></a>
         </div>
 
         <div class="home-grid">
@@ -234,7 +234,7 @@
       <section id="view-ai" class="view page studio" data-view="ai" hidden>
         <div id="studio-home">
           <div class="page-head">
-            <p class="eyebrow-line">AI Studio <span class="pro-badge">Pro</span></p>
+            <p class="eyebrow-line">AI Studio <span class="pro-badge">Gold</span></p>
             <h1>Your application team, on call.</h1>
             <p>Every tool uses your profile and résumé, so the help fits you. Nothing is sent anywhere without you.</p>
             <div id="studio-plan" class="studio-plan"></div>
@@ -256,12 +256,12 @@
       <section id="view-plans" class="view page" data-view="plans" hidden>
         <div class="page-head">
           <p class="eyebrow-line">Plans</p>
-          <h1>Free to search. Pro when you’re applying.</h1>
+          <h1>Silver is free. Gold is for when you’re applying.</h1>
           <p>Everything you use today is free. Paid features are being built and are not for sale yet.</p>
         </div>
         <div class="plans">
-          <article class="plan">
-            <h3>Free</h3>
+          <article class="plan plan-silver">
+            <h3>Silver</h3>
             <p class="plan-price">$0, for good</p>
             <ul>
               <li>Search research and internships, including local internships by city and state</li>
@@ -271,8 +271,8 @@
             </ul>
             <a class="button" href="#discover">Start searching</a>
           </article>
-          <article class="plan plan-pro">
-            <h3>Pro <span class="tag" id="pro-tag">Coming soon</span></h3>
+          <article class="plan plan-pro plan-gold">
+            <h3>Gold <span class="tag" id="pro-tag">Coming soon</span></h3>
             <p class="plan-price">$19 a month, or $59 for a 4-month season</p>
             <ul>
               <li>Coach chat that knows your profile, list and deadlines</li>
@@ -284,8 +284,8 @@
             </ul>
             <p class="fine" id="pro-note">Emails open in your own Gmail or Outlook, and you press Send.</p>
             <div class="form-actions">
-              <a class="button" href="/upgrade" id="upgrade-link" hidden>Get Pro</a>
-              <button type="button" class="link-button" id="preview-code">I have a Pro preview code</button>
+              <a class="button" href="/upgrade" id="upgrade-link" hidden>Get Gold</a>
+              <button type="button" class="link-button" id="preview-code">I have a Gold preview code</button>
             </div>
           </article>
         </div>
@@ -335,8 +335,8 @@
             <textarea name="interests" maxlength="400" placeholder="e.g. Optics, cell imaging, Python"></textarea>
           </label>
           <label class="full">Résumé (paste the text)
-            <textarea id="resume" maxlength="6000" rows="8" placeholder="Paste your résumé here. Pro uses it to write emails that sound like you."></textarea>
-            <span class="fine">Stays on this device. It’s only sent when you use a Pro writing tool, and never stored on our servers.</span>
+            <textarea id="resume" maxlength="6000" rows="8" placeholder="Paste your résumé here. Gold uses it to write emails that sound like you."></textarea>
+            <span class="fine">Stays on this device. It’s only sent when you use a Gold writing tool, and never stored on our servers.</span>
           </label>
           <div class="full form-actions">
             <button class="button">Save profile</button>

@@ -138,7 +138,7 @@ export function celebrate() {
   canvas.width = innerWidth * dpr;
   canvas.height = innerHeight * dpr;
   ctx.scale(dpr, dpr);
-  const colors = ['#6a4bff', '#ffc83d', '#22c38e', '#ff6b5b', '#3fa7ff'];
+  const colors = ['#b8924a', '#e3c88f', '#c9cdd3', '#eef0f3', '#1f4e8c'];
   const parts = Array.from({ length: 140 }, () => ({
     x: innerWidth / 2 + (Math.random() - 0.5) * 120,
     y: innerHeight * 0.38,
