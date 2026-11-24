@@ -22,11 +22,11 @@ async function start() {
   }
   const checkout = config.pro?.checkout;
   if (!checkout) {
-    say('Gold checkout opens soon. Everything else in Fieldwork is free to use now.');
+    say('Pro checkout opens soon. Everything else in Fieldwork is free to use now.');
     return;
   }
   if (!config.accounts || !window.supabase?.createClient) {
-    say('Sign-in isn’t available yet, so Gold can’t be attached to an account. Check back soon.');
+    say('Sign-in isn’t available yet, so Pro can’t be attached to an account. Check back soon.');
     return;
   }
   const db = window.supabase.createClient(config.accounts.url, config.accounts.key, {
@@ -36,7 +36,7 @@ async function start() {
   const user = data.session?.user;
   if (!user) {
     $('upgrade-status').replaceChildren(
-      document.createTextNode('Sign in first, so Gold is attached to your account. '),
+      document.createTextNode('Sign in first, so Pro is attached to your account. '),
       Object.assign(document.createElement('a'), { href: '/#profile', textContent: 'Go to sign in' }),
     );
     return;
@@ -57,7 +57,7 @@ async function start() {
         Paddle.Checkout.close();
         $('upgrade-plans').hidden = true;
         $('upgrade-status').replaceChildren(
-          document.createTextNode('Thank you! Gold is being switched on, which takes up to a minute. '),
+          document.createTextNode('Thank you! Pro is being switched on, which takes up to a minute. '),
           Object.assign(document.createElement('a'), { href: '/#discover', textContent: 'Back to Fieldwork' }),
         );
       }

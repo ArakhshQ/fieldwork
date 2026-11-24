@@ -1,6 +1,6 @@
 // Home: greeting, profile readiness, upcoming dates, next steps and progress.
-import { $, el, daysUntil, shortDate } from './ui.js';
-import { getState, getResume } from './store.js';
+import { $, el, daysUntil, shortDate, downloadCalendar, applicationEvent, toast } from './ui.js';
+import { getState, getResume, allOutreach, getOutreach } from './store.js';
 import { icon } from './icons.js';
 
 const PROFILE_CHECKS = [
@@ -81,6 +81,13 @@ export function renderHome() {
     list.append(li);
   }
 
+  const cal = $('home-calendar');
+  cal.hidden = !upcoming.length;
+  cal.onclick = () => {
+    downloadCalendar(upcoming.map(({ a }) => applicationEvent(a, a.status === 'Applied' && !!getOutreach(a.id))));
+    toast('Calendar file downloaded. Open it to add the dates, with a reminder the day before each one.');
+  };
+
   // Next steps
   const steps = $('home-steps');
   steps.replaceChildren();
@@ -98,9 +105,14 @@ export function renderHome() {
 
   // Progress
   const count = (st) => applications.filter((a) => a.status === st).length;
+  const sent = allOutreach();
+  const replies = sent.filter((o) => o.repliedAt).length;
+  const rate = sent.length ? Math.round((replies / sent.length) * 100) : null;
   const stats = [
     ['Saved', saved.length, 'bookmark'],
-    ['Applying', count('Preparing') + count('Applied'), 'send'],
+    ['Applying', count('Preparing') + count('Applied'), 'briefcase'],
+    ['Professors emailed', sent.length, 'send'],
+    [rate === null ? 'Replies' : `Replies (${rate}%)`, replies, 'mail'],
     ['Interviews', count('Interview'), 'mic'],
     ['Offers', count('Offer'), 'check'],
   ];

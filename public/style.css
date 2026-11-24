@@ -851,3 +851,14 @@ textarea[readonly] { background: var(--bg); border-color: var(--line); }
 }
 .ring-label strong, .stat strong, .score-text strong, .day-badge, .fix-num, .welcome-date, .plan-price { font-variant-numeric: lining-nums; }
 h1, h2, h3 { font-variant-numeric: lining-nums; }
+
+/* Why Pro, calendar */
+.why-pro { max-width: 920px; margin-top: 44px; display: grid; gap: 18px; }
+.why-pro h2 { font-size: 2rem; }
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 14px; }
+.why-grid article { display: grid; gap: 6px; align-content: start; padding: 22px; border-radius: var(--r-lg); background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
+.why-grid h3 { font-size: 1.45rem; }
+.why-grid h3::before { content: ''; display: block; width: 26px; height: 2px; margin-bottom: 12px; background: var(--gilt); }
+.why-grid p { color: var(--ink-2); }
+.calendar-button { margin-top: 14px; }
+.app-more .button.small { justify-self: start; }

@@ -1,6 +1,6 @@
 // Applications board: drag cards between stages (or use the stage menu).
-import { $, el, externalLink, toast, daysUntil, openDialog, closeDialog, safeLink } from './ui.js';
-import { getState, STAGES, updateApplication, removeApplication, track, exportData } from './store.js';
+import { $, el, externalLink, toast, daysUntil, openDialog, closeDialog, safeLink, shortDate, celebrate, downloadCalendar, applicationEvent } from './ui.js';
+import { getState, STAGES, updateApplication, removeApplication, track, exportData, getOutreach, markReplied } from './store.js';
 import { draftFollowUp, hasOutreach } from './pro.js';
 
 let dragId = null;
@@ -102,7 +102,33 @@ function card(a) {
     if (confirm(`Remove “${a.title}” from Applications?`)) removeApplication(a.id);
   });
   actions.append(prep, remove);
-  if (hasOutreach(a.id) && ['Applied', 'Preparing'].includes(a.status)) {
+  if (a.deadline) {
+    const cal = el('button', 'Add to calendar', 'button small ghost');
+    cal.type = 'button';
+    cal.addEventListener('click', () => {
+      downloadCalendar([applicationEvent(a, a.status === 'Applied' && hasOutreach(a.id))], 'fieldwork-date.ics');
+      toast('Calendar file downloaded. Open it to add the date.');
+    });
+    actions.prepend(cal);
+  }
+  const sent = getOutreach(a.id);
+  if (sent) {
+    const replied = !!sent.repliedAt;
+    const reply = el('button', replied ? `Replied ${shortDate(sent.repliedAt)} · undo` : 'They replied', `button small ${replied ? 'ghost' : ''}`);
+    reply.type = 'button';
+    reply.addEventListener('click', () => {
+      markReplied(a.id, !replied);
+      if (replied) {
+        updateApplication(a.id, { notes: (a.notes || '').replace(/\s*Replied [^.]*\.$/, '') });
+        return;
+      }
+      updateApplication(a.id, { notes: `${a.notes ? a.notes + ' ' : ''}Replied ${shortDate(new Date())}.`.slice(0, 1000) });
+      celebrate();
+      toast('A reply! Answer within a day or two. If they offer a call, practice with Interview practice first.');
+    });
+    more.append(reply);
+  }
+  if (sent && !sent.repliedAt && ['Applied', 'Preparing'].includes(a.status)) {
     const follow = el('button', 'Draft a follow-up', 'button small pro-action');
     follow.type = 'button';
     follow.addEventListener('click', () => draftFollowUp(a));

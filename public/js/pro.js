@@ -1,6 +1,6 @@
-// Gold: lab briefings and professor emails.
+// Pro: lab briefings and professor emails.
 //
-// Access is a Gold preview code (saved on this device) today, and a signed-in
+// Access is a Pro preview code (saved on this device) today, and a signed-in
 // subscription once billing is live. Drafts open in the student's own Gmail or
 // Outlook; Fieldwork never sends email itself.
 import { $, el, toast, openDialog, closeDialog, externalLink, shortDate } from './ui.js';
@@ -42,10 +42,10 @@ export async function refreshStatus() {
 export const isPro = () => status.plan === 'pro' || status.plan === 'preview';
 export const proStatus = () => status;
 export const aiAvailable = () => !!config.ai;
-export const planLabel = () => (status.plan === 'pro' ? 'Gold' : status.plan === 'preview' ? 'Gold preview' : 'Silver');
+export const planLabel = () => (status.plan === 'pro' ? 'Pro' : status.plan === 'preview' ? 'Pro preview' : 'Free');
 
-/** True when Gold tools can run; otherwise shows the upgrade dialog and returns false. */
-export async function ensurePro(title = 'This is a Gold tool') {
+/** True when Pro tools can run; otherwise shows the upgrade dialog and returns false. */
+export async function ensurePro(title = 'This is a Pro tool') {
   if (!config.ai) {
     upsell(title);
     return false;
@@ -67,7 +67,7 @@ function paintPlans() {
     const r = status.remaining;
     $('pro-note').textContent = r
       ? `Left this month: ${r.review ?? '–'} reviews, ${r.application ?? '–'} applications, ${r.briefing} lab briefings, ${r.email} emails, ${r.chat ?? '–'} coach messages.`
-      : 'Gold is active on this device.';
+      : 'Pro is active on this device.';
   } else {
     tag.textContent = config.checkout ? 'Available' : 'Coming soon';
   }
@@ -75,7 +75,7 @@ function paintPlans() {
 }
 
 export function previewCodeDialog() {
-  const body = openDialog('Gold preview code', ['Enter the code you were given. It’s saved on this device only.']);
+  const body = openDialog('Pro preview code', ['Enter the code you were given. It’s saved on this device only.']);
   const form = el('form', null, 'stack');
   const label = el('label', 'Code');
   const input = el('input');
@@ -99,7 +99,7 @@ export function previewCodeDialog() {
     await refreshStatus();
     if (status.plan === 'preview') {
       closeDialog();
-      toast('Gold preview is on.');
+      toast('Pro preview is on.');
     } else {
       form.querySelector('.form-error')?.remove();
       form.append(el('p', 'That code didn’t work. Check it and try again.', 'form-error'));
@@ -117,15 +117,15 @@ export function previewCodeDialog() {
 
 function upsell(title) {
   const body = openDialog(title, [
-    'Gold gives you an application team: a coach, résumé and essay reviews, an application builder, interview practice, letter requests, and personal emails to professors.',
+    'Pro gives you an application team: a coach, résumé and essay reviews, an application builder, interview practice, letter requests, and personal emails to professors.',
   ]);
   const actions = el('div', null, 'form-actions');
   if (config.checkout) {
-    const a = el('a', 'Get Gold for $19 a month', 'button');
+    const a = el('a', 'Get Pro for $19 a month', 'button');
     a.href = '/upgrade';
     actions.append(a);
   } else {
-    body.append(el('p', 'Gold opens soon.', 'fine'));
+    body.append(el('p', 'Pro opens soon.', 'fine'));
   }
   if (config.preview) {
     const b = el('button', 'I have a preview code', 'link-button');
@@ -144,7 +144,7 @@ export async function proPost(path, payload) {
   const res = await fetch(path, { method: 'POST', headers: await proHeaders(), body: JSON.stringify(payload) });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    if (data.code === 'pro_required') upsell('This is a Gold tool');
+    if (data.code === 'pro_required') upsell('This is a Pro tool');
     throw Object.assign(new Error(data.error || 'Something went wrong. Try again.'), { code: data.code });
   }
   afterUse(data);
@@ -156,7 +156,7 @@ export async function proStream(path, payload, onText) {
   const res = await fetch(path, { method: 'POST', headers: await proHeaders(), body: JSON.stringify(payload) });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
-    if (data.code === 'pro_required') upsell('This is a Gold tool');
+    if (data.code === 'pro_required') upsell('This is a Pro tool');
     throw new Error(data.error || 'Something went wrong. Try again.');
   }
   const reader = res.body.getReader();

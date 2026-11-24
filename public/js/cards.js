@@ -146,7 +146,7 @@ export function opportunityCard(r, opts = {}) {
     card.append(externalLink('Find the lab’s website', 'https://www.google.com/search?q=' + encodeURIComponent(q), 'card-link'));
     const write = el('button', 'Write to this professor', 'button small pro-action');
     write.type = 'button';
-    write.append(el('span', 'Gold', 'pro-badge'));
+    write.append(el('span', 'Pro', 'pro-badge'));
     write.addEventListener('click', () => writeToProfessor(r));
     card.append(write);
   }

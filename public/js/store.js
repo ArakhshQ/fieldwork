@@ -69,7 +69,7 @@ function emit() {
 
 export const getState = () => state;
 
-// The résumé never leaves this device except inside a Gold request the student starts.
+// The résumé never leaves this device except inside a Pro request the student starts.
 const RESUME_KEY = 'fieldwork-resume';
 const OUTREACH_KEY = 'fieldwork-outreach';
 export const getResume = () => read(RESUME_KEY, '') || '';
@@ -83,7 +83,17 @@ export function setOutreach(id, entry) {
   for (const old of ids.slice(LIMIT)) delete all[old];
   write(OUTREACH_KEY, all);
 }
-/** The signed-in student's session token, for Gold requests. */
+/** Every email the student sent through Fieldwork, newest first. */
+export const allOutreach = () => Object.values(read(OUTREACH_KEY, {}));
+/** Record (or undo) a professor's reply without changing when the email was sent. */
+export function markReplied(id, replied = true) {
+  const all = read(OUTREACH_KEY, {});
+  if (!all[id]) return;
+  if (replied) all[id].repliedAt = new Date().toISOString();
+  else delete all[id].repliedAt;
+  write(OUTREACH_KEY, all);
+}
+/** The signed-in student's session token, for Pro requests. */
 export async function accessToken() {
   if (!db || !state.user) return '';
   const { data } = await db.auth.getSession();

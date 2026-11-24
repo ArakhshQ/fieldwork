@@ -57,9 +57,9 @@ Searches: `GET /api/internships` and `GET /api/research` (both take `q`, `city`,
 
 Note: GitHub pauses scheduled workflows in public repositories after 60 days without repository activity. If the data stops updating, re-enable the workflows from the Actions tab.
 
-## Gold: AI Studio
+## Pro: AI Studio
 
-The plans are Silver (free) and Gold (paid; called `pro` in code and the database). Gold students get a team of AI tools (`lib/tools.mjs`, routes in `lib/pro-routes.mjs`). All of them use the student's profile and résumé, fence fetched or pasted text as data, and clamp every output.
+Pro students get a team of AI tools (`lib/tools.mjs`, routes in `lib/pro-routes.mjs`). All of them use the student's profile and résumé, fence fetched or pasted text as data, and clamp every output.
 
 | Tool | Route | Model |
 | --- | --- | --- |
@@ -75,7 +75,7 @@ Search results carry a match grade: Platinum when every search word is in the ti
 
 The application builder only shows a deadline when its quote appears word for word on the page, and drops quotes it can't find. Lab emails are only shown when the address appears verbatim on an academic page. Fieldwork never sends email; drafts open in the student's own Gmail or Outlook.
 
-Access (`lib/pro.mjs`): Gold preview codes (`PRO_PREVIEW_CODES`) work now; once accounts are on, an active Paddle subscription unlocks Gold. Monthly limits for Gold: 30 briefings, 60 emails, 15 reviews, 15 applications, 10 interviews, 10 letter kits, 10 imports and 150 chat messages (about half for preview codes), enforced in the database by `consume_ai_quota()` for subscribers. Inputs are validated before any allowance is used. `AI_DAILY_BUDGET_USD` (default 10) pauses all AI calls for the rest of the UTC day once reached. Each call's cost is logged to the server log.
+Access (`lib/pro.mjs`): Pro preview codes (`PRO_PREVIEW_CODES`) work now; once accounts are on, an active Paddle subscription unlocks Pro. Monthly limits for Pro: 30 briefings, 60 emails, 15 reviews, 15 applications, 10 interviews, 10 letter kits, 10 imports and 150 chat messages (about half for preview codes), enforced in the database by `consume_ai_quota()` for subscribers. Inputs are validated before any allowance is used. `AI_DAILY_BUDGET_USD` (default 10) pauses all AI calls for the rest of the UTC day once reached. Each call's cost is logged to the server log.
 
 Billing (`lib/paddle.mjs`, `/upgrade`): Paddle.js loads only on the checkout page, which has its own CSP. `POST /api/paddle/webhook` verifies the `Paddle-Signature` HMAC on the raw body and upserts the subscription into Supabase with the server-only `SUPABASE_SECRET_KEY`. Run `supabase/001_accounts.sql`, `002_billing.sql` and `003_tools.sql` in order.
 
