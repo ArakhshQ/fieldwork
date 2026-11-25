@@ -1,50 +1,29 @@
 {
- "generatedAt": "2026-11-24T14:59:48.519Z",
+ "generatedAt": "2026-11-25T00:53:53.934Z",
  "boardsChecked": 104,
- "boardsOk": 103,
- "internships": 398,
+ "boardsOk": 104,
+ "internships": 443,
  "ok": [
-  {
-   "name": "Dropbox",
-   "ats": "greenhouse",
-   "token": "dropbox",
-   "postings": 54,
-   "internships": 0
-  },
-  {
-   "name": "Figma",
-   "ats": "greenhouse",
-   "token": "figma",
-   "postings": 145,
-   "internships": 8
-  },
   {
    "name": "Airbnb",
    "ats": "greenhouse",
    "token": "airbnb",
-   "postings": 199,
+   "postings": 198,
    "internships": 1
-  },
-  {
-   "name": "Robinhood",
-   "ats": "greenhouse",
-   "token": "robinhood",
-   "postings": 159,
-   "internships": 3
   },
   {
    "name": "Stripe",
    "ats": "greenhouse",
    "token": "stripe",
-   "postings": 769,
+   "postings": 771,
    "internships": 0
   },
   {
-   "name": "Databricks",
+   "name": "Pinterest",
    "ats": "greenhouse",
-   "token": "databricks",
-   "postings": 889,
-   "internships": 5
+   "token": "pinterest",
+   "postings": 168,
+   "internships": 13
   },
   {
    "name": "Lyft",
@@ -54,32 +33,39 @@
    "internships": 5
   },
   {
-   "name": "Pinterest",
+   "name": "Figma",
    "ats": "greenhouse",
-   "token": "pinterest",
-   "postings": 167,
-   "internships": 13
+   "token": "figma",
+   "postings": 146,
+   "internships": 8
   },
   {
-   "name": "Reddit",
+   "name": "Dropbox",
    "ats": "greenhouse",
-   "token": "reddit",
-   "postings": 147,
+   "token": "dropbox",
+   "postings": 49,
    "internships": 0
   },
   {
    "name": "Instacart",
    "ats": "greenhouse",
    "token": "instacart",
-   "postings": 96,
+   "postings": 98,
    "internships": 0
   },
   {
    "name": "Coinbase",
    "ats": "greenhouse",
    "token": "coinbase",
-   "postings": 249,
+   "postings": 248,
    "internships": 22
+  },
+  {
+   "name": "Reddit",
+   "ats": "greenhouse",
+   "token": "reddit",
+   "postings": 149,
+   "internships": 0
   },
   {
    "name": "Discord",
@@ -92,14 +78,14 @@
    "name": "Asana",
    "ats": "greenhouse",
    "token": "asana",
-   "postings": 107,
+   "postings": 110,
    "internships": 0
   },
   {
    "name": "Anthropic",
    "ats": "greenhouse",
    "token": "anthropic",
-   "postings": 633,
+   "postings": 635,
    "internships": 0
   },
   {
@@ -110,81 +96,102 @@
    "internships": 0
   },
   {
-   "name": "Twilio",
-   "ats": "greenhouse",
-   "token": "twilio",
-   "postings": 114,
-   "internships": 0
-  },
-  {
    "name": "Datadog",
    "ats": "greenhouse",
    "token": "datadog",
-   "postings": 384,
+   "postings": 386,
    "internships": 1
+  },
+  {
+   "name": "Robinhood",
+   "ats": "greenhouse",
+   "token": "robinhood",
+   "postings": 160,
+   "internships": 3
+  },
+  {
+   "name": "Databricks",
+   "ats": "greenhouse",
+   "token": "databricks",
+   "postings": 890,
+   "internships": 5
+  },
+  {
+   "name": "Twilio",
+   "ats": "greenhouse",
+   "token": "twilio",
+   "postings": 115,
+   "internships": 0
   },
   {
    "name": "MongoDB",
    "ats": "greenhouse",
    "token": "mongodb",
-   "postings": 419,
+   "postings": 418,
    "internships": 4
+  },
+  {
+   "name": "Toast",
+   "ats": "greenhouse",
+   "token": "toast",
+   "postings": 300,
+   "internships": 0
   },
   {
    "name": "Cloudflare",
    "ats": "greenhouse",
    "token": "cloudflare",
-   "postings": 503,
-   "internships": 0
-  },
-  {
-   "name": "GitLab",
-   "ats": "greenhouse",
-   "token": "gitlab",
-   "postings": 252,
+   "postings": 512,
    "internships": 0
   },
   {
    "name": "Affirm",
    "ats": "greenhouse",
    "token": "affirm",
-   "postings": 217,
+   "postings": 216,
    "internships": 2
-  },
-  {
-   "name": "Toast",
-   "ats": "greenhouse",
-   "token": "toast",
-   "postings": 309,
-   "internships": 0
   },
   {
    "name": "Samsara",
    "ats": "greenhouse",
    "token": "samsara",
-   "postings": 291,
+   "postings": 288,
    "internships": 7
+  },
+  {
+   "name": "GitLab",
+   "ats": "greenhouse",
+   "token": "gitlab",
+   "postings": 250,
+   "internships": 0
   },
   {
    "name": "Scale AI",
    "ats": "greenhouse",
    "token": "scaleai",
-   "postings": 159,
+   "postings": 157,
    "internships": 2
   },
   {
    "name": "Roblox",
    "ats": "greenhouse",
    "token": "roblox",
-   "postings": 255,
+   "postings": 256,
    "internships": 2
   },
   {
    "name": "Waymo",
    "ats": "greenhouse",
    "token": "waymo",
-   "postings": 357,
+   "postings": 358,
    "internships": 47
+  },
+  {
+   "name": "Chime",
+   "ats": "greenhouse",
+   "token": "chime",
+   "postings": 79,
+   "internships": 0
   },
   {
    "name": "Gusto",
@@ -194,39 +201,25 @@
    "internships": 1
   },
   {
-   "name": "Chime",
+   "name": "Twitch",
    "ats": "greenhouse",
-   "token": "chime",
-   "postings": 80,
-   "internships": 0
+   "token": "twitch",
+   "postings": 51,
+   "internships": 2
   },
   {
    "name": "Okta",
    "ats": "greenhouse",
    "token": "okta",
-   "postings": 371,
+   "postings": 373,
    "internships": 0
   },
   {
    "name": "Duolingo",
    "ats": "greenhouse",
    "token": "duolingo",
-   "postings": 52,
+   "postings": 53,
    "internships": 3
-  },
-  {
-   "name": "Twitch",
-   "ats": "greenhouse",
-   "token": "twitch",
-   "postings": 50,
-   "internships": 2
-  },
-  {
-   "name": "Peloton",
-   "ats": "greenhouse",
-   "token": "peloton",
-   "postings": 45,
-   "internships": 0
   },
   {
    "name": "Betterment",
@@ -236,31 +229,38 @@
    "internships": 0
   },
   {
+   "name": "Peloton",
+   "ats": "greenhouse",
+   "token": "peloton",
+   "postings": 45,
+   "internships": 0
+  },
+  {
    "name": "Oscar Health",
    "ats": "greenhouse",
    "token": "oscar",
-   "postings": 178,
-   "internships": 1
+   "postings": 177,
+   "internships": 2
   },
   {
    "name": "Flatiron Health",
    "ats": "greenhouse",
    "token": "flatironhealth",
-   "postings": 25,
-   "internships": 0
-  },
-  {
-   "name": "Justworks",
-   "ats": "greenhouse",
-   "token": "justworks",
-   "postings": 102,
+   "postings": 21,
    "internships": 0
   },
   {
    "name": "Zocdoc",
    "ats": "greenhouse",
    "token": "zocdoc",
-   "postings": 64,
+   "postings": 65,
+   "internships": 0
+  },
+  {
+   "name": "Justworks",
+   "ats": "greenhouse",
+   "token": "justworks",
+   "postings": 103,
    "internships": 0
   },
   {
@@ -271,13 +271,6 @@
    "internships": 2
   },
   {
-   "name": "Braze",
-   "ats": "greenhouse",
-   "token": "braze",
-   "postings": 345,
-   "internships": 1
-  },
-  {
    "name": "Klaviyo",
    "ats": "greenhouse",
    "token": "klaviyo",
@@ -285,45 +278,38 @@
    "internships": 0
   },
   {
-   "name": "PathAI",
+   "name": "Braze",
    "ats": "greenhouse",
-   "token": "pathai",
-   "postings": 17,
-   "internships": 0
+   "token": "braze",
+   "postings": 347,
+   "internships": 1
   },
   {
    "name": "Formlabs",
    "ats": "greenhouse",
    "token": "formlabs",
-   "postings": 270,
+   "postings": 272,
    "internships": 31
+  },
+  {
+   "name": "PathAI",
+   "ats": "greenhouse",
+   "token": "pathai",
+   "postings": 18,
+   "internships": 0
   },
   {
    "name": "Ginkgo Bioworks",
    "ats": "greenhouse",
    "token": "ginkgobioworks",
-   "postings": 17,
-   "internships": 4
-  },
-  {
-   "name": "Recursion",
-   "ats": "greenhouse",
-   "token": "recursionpharmaceuticals",
    "postings": 16,
-   "internships": 1
+   "internships": 4
   },
   {
    "name": "Nuro",
    "ats": "greenhouse",
    "token": "nuro",
    "postings": 108,
-   "internships": 0
-  },
-  {
-   "name": "Nextdoor",
-   "ats": "greenhouse",
-   "token": "nextdoor",
-   "postings": 24,
    "internships": 0
   },
   {
@@ -334,17 +320,38 @@
    "internships": 0
   },
   {
+   "name": "Nextdoor",
+   "ats": "greenhouse",
+   "token": "nextdoor",
+   "postings": 23,
+   "internships": 0
+  },
+  {
    "name": "Brex",
    "ats": "greenhouse",
    "token": "brex",
-   "postings": 263,
+   "postings": 261,
    "internships": 0
+  },
+  {
+   "name": "Recursion",
+   "ats": "greenhouse",
+   "token": "recursionpharmaceuticals",
+   "postings": 17,
+   "internships": 1
   },
   {
    "name": "Carta",
    "ats": "greenhouse",
    "token": "carta",
    "postings": 81,
+   "internships": 0
+  },
+  {
+   "name": "Webflow",
+   "ats": "greenhouse",
+   "token": "webflow",
+   "postings": 0,
    "internships": 0
   },
   {
@@ -355,52 +362,31 @@
    "internships": 1
   },
   {
-   "name": "Webflow",
-   "ats": "greenhouse",
-   "token": "webflow",
-   "postings": 0,
-   "internships": 0
-  },
-  {
    "name": "Vercel",
    "ats": "greenhouse",
    "token": "vercel",
-   "postings": 85,
+   "postings": 86,
    "internships": 0
   },
   {
    "name": "Intercom",
    "ats": "greenhouse",
    "token": "intercom",
-   "postings": 123,
+   "postings": 124,
    "internships": 0
   },
   {
-   "name": "Hudson River Trading",
+   "name": "Anduril",
    "ats": "greenhouse",
-   "token": "wehrtyou",
-   "postings": 85,
-   "internships": 5
-  },
-  {
-   "name": "IMC Trading",
-   "ats": "greenhouse",
-   "token": "imc",
-   "postings": 153,
-   "internships": 9
-  },
-  {
-   "name": "Point72",
-   "ats": "greenhouse",
-   "token": "point72",
-   "postings": 201,
-   "internships": 11
+   "token": "andurilindustries",
+   "postings": 2606,
+   "internships": 44
   },
   {
    "name": "Jump Trading",
    "ats": "greenhouse",
    "token": "jumptrading",
-   "postings": 87,
+   "postings": 86,
    "internships": 9
   },
   {
@@ -411,31 +397,45 @@
    "internships": 0
   },
   {
+   "name": "Hudson River Trading",
+   "ats": "greenhouse",
+   "token": "wehrtyou",
+   "postings": 85,
+   "internships": 5
+  },
+  {
+   "name": "Point72",
+   "ats": "greenhouse",
+   "token": "point72",
+   "postings": 202,
+   "internships": 11
+  },
+  {
+   "name": "IMC Trading",
+   "ats": "greenhouse",
+   "token": "imc",
+   "postings": 151,
+   "internships": 9
+  },
+  {
    "name": "Zipline",
    "ats": "greenhouse",
    "token": "flyzipline",
-   "postings": 317,
-   "internships": 33
-  },
-  {
-   "name": "Shield AI",
-   "ats": "lever",
-   "token": "shieldai",
-   "postings": 0,
-   "internships": 0
+   "postings": 313,
+   "internships": 31
   },
   {
    "name": "Planet",
    "ats": "greenhouse",
    "token": "planetlabs",
-   "postings": 107,
+   "postings": 105,
    "internships": 0
   },
   {
    "name": "Relativity Space",
    "ats": "greenhouse",
    "token": "relativity",
-   "postings": 397,
+   "postings": 405,
    "internships": 0
   },
   {
@@ -446,18 +446,25 @@
    "internships": 0
   },
   {
-   "name": "Ramp",
-   "ats": "ashby",
-   "token": "ramp",
-   "postings": 180,
-   "internships": 6
-  },
-  {
    "name": "Vanta",
    "ats": "ashby",
    "token": "vanta",
-   "postings": 65,
+   "postings": 61,
    "internships": 0
+  },
+  {
+   "name": "Replit",
+   "ats": "ashby",
+   "token": "replit",
+   "postings": 37,
+   "internships": 1
+  },
+  {
+   "name": "Ramp",
+   "ats": "ashby",
+   "token": "ramp",
+   "postings": 182,
+   "internships": 6
   },
   {
    "name": "Notion",
@@ -467,11 +474,11 @@
    "internships": 5
   },
   {
-   "name": "Replit",
+   "name": "Hex",
    "ats": "ashby",
-   "token": "replit",
-   "postings": 38,
-   "internships": 1
+   "token": "hex",
+   "postings": 44,
+   "internships": 2
   },
   {
    "name": "Mercury",
@@ -481,11 +488,18 @@
    "internships": 0
   },
   {
-   "name": "Hex",
+   "name": "Harvey",
    "ats": "ashby",
-   "token": "hex",
-   "postings": 42,
-   "internships": 2
+   "token": "harvey",
+   "postings": 394,
+   "internships": 0
+  },
+  {
+   "name": "Perplexity",
+   "ats": "ashby",
+   "token": "perplexity",
+   "postings": 151,
+   "internships": 1
   },
   {
    "name": "Modal",
@@ -493,13 +507,6 @@
    "token": "modal",
    "postings": 52,
    "internships": 1
-  },
-  {
-   "name": "Palantir",
-   "ats": "lever",
-   "token": "palantir",
-   "postings": 305,
-   "internships": 36
   },
   {
    "name": "Runway",
@@ -512,77 +519,70 @@
    "name": "Clay",
    "ats": "ashby",
    "token": "claylabs",
-   "postings": 57,
-   "internships": 0
-  },
-  {
-   "name": "Perplexity",
-   "ats": "ashby",
-   "token": "perplexity",
-   "postings": 151,
-   "internships": 1
-  },
-  {
-   "name": "OpenAI",
-   "ats": "ashby",
-   "token": "openai",
-   "postings": 865,
-   "internships": 0
-  },
-  {
-   "name": "Harvey",
-   "ats": "ashby",
-   "token": "harvey",
-   "postings": 398,
+   "postings": 60,
    "internships": 0
   },
   {
    "name": "ElevenLabs",
    "ats": "ashby",
    "token": "elevenlabs",
-   "postings": 119,
+   "postings": 117,
    "internships": 0
   },
   {
-   "name": "Cohere",
+   "name": "OpenAI",
    "ats": "ashby",
-   "token": "cohere",
-   "postings": 124,
-   "internships": 1
+   "token": "openai",
+   "postings": 875,
+   "internships": 0
+  },
+  {
+   "name": "Shield AI",
+   "ats": "lever",
+   "token": "shieldai",
+   "postings": 0,
+   "internships": 0
   },
   {
    "name": "DoorDash",
    "ats": "greenhouse",
    "token": "doordashusa",
-   "postings": 407,
+   "postings": 399,
    "internships": 9
+  },
+  {
+   "name": "Cohere",
+   "ats": "ashby",
+   "token": "cohere",
+   "postings": 122,
+   "internships": 1
   },
   {
    "name": "Neuralink",
    "ats": "greenhouse",
    "token": "neuralink",
    "postings": 78,
-   "internships": 18
+   "internships": 19
   },
   {
    "name": "Astranis",
    "ats": "greenhouse",
    "token": "astranis",
-   "postings": 165,
+   "postings": 164,
    "internships": 39
   },
   {
    "name": "SpaceX",
    "ats": "greenhouse",
    "token": "spacex",
-   "postings": 2863,
+   "postings": 2854,
    "internships": 0
   },
   {
    "name": "Generate Biomedicines",
    "ats": "greenhouse",
    "token": "generatebiomedicines",
-   "postings": 24,
+   "postings": 23,
    "internships": 0
   },
   {
@@ -593,17 +593,24 @@
    "internships": 0
   },
   {
+   "name": "Redwood Materials",
+   "ats": "greenhouse",
+   "token": "redwoodmaterials",
+   "postings": 89,
+   "internships": 0
+  },
+  {
+   "name": "Verkada",
+   "ats": "greenhouse",
+   "token": "verkada",
+   "postings": 351,
+   "internships": 8
+  },
+  {
    "name": "Chan Zuckerberg Initiative",
    "ats": "greenhouse",
    "token": "chanzuckerberginitiative",
    "postings": 4,
-   "internships": 0
-  },
-  {
-   "name": "Twist Bioscience",
-   "ats": "greenhouse",
-   "token": "twistbioscience",
-   "postings": 61,
    "internships": 0
   },
   {
@@ -614,17 +621,17 @@
    "internships": 0
   },
   {
-   "name": "Redwood Materials",
-   "ats": "greenhouse",
-   "token": "redwoodmaterials",
-   "postings": 99,
-   "internships": 0
-  },
-  {
    "name": "AbCellera",
    "ats": "greenhouse",
    "token": "abcellera",
-   "postings": 38,
+   "postings": 39,
+   "internships": 0
+  },
+  {
+   "name": "Twist Bioscience",
+   "ats": "greenhouse",
+   "token": "twistbioscience",
+   "postings": 61,
    "internships": 0
   },
   {
@@ -642,6 +649,20 @@
    "internships": 2
   },
   {
+   "name": "Squarepoint",
+   "ats": "greenhouse",
+   "token": "squarepointcapital",
+   "postings": 87,
+   "internships": 0
+  },
+  {
+   "name": "Optiver",
+   "ats": "greenhouse",
+   "token": "optiverus",
+   "postings": 147,
+   "internships": 2
+  },
+  {
    "name": "Clear Street",
    "ats": "greenhouse",
    "token": "clearstreet",
@@ -652,21 +673,14 @@
    "name": "Flow Traders",
    "ats": "greenhouse",
    "token": "flowtraders",
-   "postings": 43,
+   "postings": 42,
    "internships": 1
-  },
-  {
-   "name": "Squarepoint",
-   "ats": "greenhouse",
-   "token": "squarepointcapital",
-   "postings": 87,
-   "internships": 0
   },
   {
    "name": "Yext",
    "ats": "greenhouse",
    "token": "yext",
-   "postings": 32,
+   "postings": 34,
    "internships": 0
   },
   {
@@ -684,54 +698,40 @@
    "internships": 4
   },
   {
-   "name": "Zoox",
-   "ats": "lever",
-   "token": "zoox",
-   "postings": 243,
-   "internships": 18
-  },
-  {
    "name": "Decagon",
    "ats": "ashby",
    "token": "decagon",
-   "postings": 113,
+   "postings": 105,
    "internships": 1
-  },
-  {
-   "name": "Sierra",
-   "ats": "ashby",
-   "token": "sierra",
-   "postings": 201,
-   "internships": 2
   },
   {
    "name": "Zip",
    "ats": "ashby",
    "token": "zip",
-   "postings": 112,
+   "postings": 114,
    "internships": 0
   },
   {
-   "name": "Optiver",
-   "ats": "greenhouse",
-   "token": "optiverus",
-   "postings": 147,
+   "name": "Sierra",
+   "ats": "ashby",
+   "token": "sierra",
+   "postings": 203,
    "internships": 2
   },
   {
-   "name": "Verkada",
-   "ats": "greenhouse",
-   "token": "verkada",
-   "postings": 350,
-   "internships": 8
+   "name": "Palantir",
+   "ats": "lever",
+   "token": "palantir",
+   "postings": 305,
+   "internships": 36
+  },
+  {
+   "name": "Zoox",
+   "ats": "lever",
+   "token": "zoox",
+   "postings": 246,
+   "internships": 19
   }
  ],
- "failed": [
-  {
-   "name": "Anduril",
-   "ats": "greenhouse",
-   "token": "andurilindustries",
-   "error": "The operation was aborted due to timeout"
-  }
- ]
+ "failed": []
 }
